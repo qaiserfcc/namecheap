@@ -16,7 +16,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit, OnModul
   // Helper method to enable brand isolation
   async enableBrandIsolation() {
     // Middleware to automatically filter by brandId
-    this.$use(async (params, next) => {
+    (this as any).$use(async (params: any, next: any) => {
       // Apply brand filtering logic here if needed
       return next(params);
     });
