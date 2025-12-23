@@ -1,0 +1,57 @@
+.
+├── ARCHITECTURE.md
+├── CHANGELOG.md
+├── CONTRIBUTING.md
+├── DEPLOYMENT.md
+├── IMPLEMENTATION_SUMMARY.md
+├── PROJECT_STRUCTURE.txt
+├── README.md
+├── backend
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── nest-cli.json
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── prisma
+│   │   ├── schema.prisma
+│   │   └── seed.ts
+│   ├── prisma.config.ts
+│   ├── src
+│   │   ├── app.module.ts
+│   │   ├── auth
+│   │   ├── brands
+│   │   ├── common
+│   │   ├── config
+│   │   ├── main.ts
+│   │   ├── orders
+│   │   ├── products
+│   │   └── users
+│   └── tsconfig.json
+├── docker-compose.yml
+├── frontend
+│   ├── Dockerfile
+│   ├── README.md
+│   ├── app
+│   │   ├── admin
+│   │   ├── auth
+│   │   ├── brands
+│   │   ├── globals.css
+│   │   ├── layout.tsx
+│   │   ├── page.tsx
+│   │   └── products
+│   ├── components
+│   │   ├── layout
+│   │   └── ui
+│   ├── lib
+│   ├── next.config.ts
+│   ├── package-lock.json
+│   ├── package.json
+│   ├── postcss.config.mjs
+│   ├── public
+│   ├── tailwind.config.ts
+│   ├── tsconfig.json
+│   ├── types
+│   └── utils
+└── setup.sh
+
+24 directories, 31 files
