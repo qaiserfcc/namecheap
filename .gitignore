@@ -47,3 +47,6 @@ generated/
 *.swp
 *.swo
 *~
+
+# Prisma
+backend/prisma/migrations/
