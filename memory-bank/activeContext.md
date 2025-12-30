@@ -2,7 +2,7 @@
 
 ## Current Goals
 
-- Goal 1
+- Documented current Next.js app structure (app router pages and shared UI components) and noted missing backend folder; summarizing project layout for user.
 
 ## Current Blockers
 
