@@ -1,9 +1,5 @@
 # Active Context
-
-## Current Goals
-
-- Documented current Next.js app structure (app router pages and shared UI components) and noted missing backend folder; summarizing project layout for user.
-
-## Current Blockers
-
-- None yet
+- Documenting current repo state and refreshing memory bank.
+- Workspace contains a Next.js 16 app with the app router; no dedicated backend folder found.
+- Database schema and sample data provided as SQL scripts in `scripts/`.
+- Next steps: confirm if backend lives elsewhere if needed for integration.
