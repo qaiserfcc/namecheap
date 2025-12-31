@@ -18,8 +18,11 @@ export async function registerUser(email: string, password: string, fullName: st
   }
 
   const passwordHash = await hashPassword(password)
-  const result = await createUser(email, passwordHash, fullName, role)
-  return result[0]
+  const results = await createUser(email, passwordHash, fullName, role)
+  if (!results || results.length === 0) {
+    throw new Error("Failed to create user")
+  }
+  return results[0]
 }
 
 export async function authenticateUser(email: string, password: string) {

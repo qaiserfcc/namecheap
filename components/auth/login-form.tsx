@@ -49,8 +49,8 @@ export function LoginForm() {
   }
 
   function fillAdminCredentials() {
-    setEmail("admin@namecheap.com")
-    setPassword("admin123")
+    setEmail("admin@cheapname.tyo")
+    setPassword("password123")
   }
 
   return (
@@ -119,7 +119,7 @@ export function LoginForm() {
           Auto-Fill Admin Credentials
         </Button>
         <p className="text-xs text-yellow-300/60 mt-2 italic">
-          Click to auto-fill: admin@namecheap.com / admin123
+          Click to auto-fill: admin@cheapname.tyo / password123
         </p>
       </div>
     </Card>

@@ -18,8 +18,8 @@ scripts/02_sample_data.sql
 
 This script will create:
 - **Admin User Account:**
-  - Email: `admin@namecheap.com`
-  - Password: `admin123`
+  - Email: `admin@cheapname.tyo`
+  - Password: `password123`
   - Role: Admin (full dashboard access)
 
 - **Sample Organic Products:** 8 sample products across Skincare, Haircare, and Health categories

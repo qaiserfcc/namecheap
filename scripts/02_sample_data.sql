@@ -1,6 +1,7 @@
 -- Insert sample admin user (password: admin123)
+-- Insert sample admin user (password: password123)
 INSERT INTO users (email, password_hash, full_name, role) 
-VALUES ('admin@namecheap.com', '$2a$10$8PDsj5.zcJY8X5I7qJXQye3t1nPfXaB3Y2v.nKvX2nQ7.Z8Hm4Hta', 'Namecheap Admin', 'admin')
+VALUES ('admin@cheapname.tyo', '$2b$10$XmOtnYWutVe/HqiRxhAqH.iGzd2nwKmlZdr0GIhxuZKm2G4/oj.BW', 'Admin User', 'admin')
 ON CONFLICT (email) DO NOTHING;
 
 -- Insert sample organic products

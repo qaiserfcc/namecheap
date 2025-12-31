@@ -1,5 +1,6 @@
--- Add full_name column to users table if it doesn't exist
--- This migration fixes the "column full_name does not exist" error
+-- Migration 01: Add missing columns to users table
+-- This migration fixes the "column full_name/phone does not exist" errors
+-- Run this BEFORE inserting sample data
 
 DO $$ 
 BEGIN
@@ -11,7 +12,6 @@ BEGIN
   END IF;
 END $$;
 
--- Also ensure phone column exists
 DO $$ 
 BEGIN
   IF NOT EXISTS (
@@ -22,7 +22,19 @@ BEGIN
   END IF;
 END $$;
 
--- Update existing admin user to ensure it has proper fields
+-- Migration 02: Add missing is_organic column to products table
+-- This migration fixes the "column is_organic does not exist" error
+DO $$ 
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns 
+    WHERE table_name = 'products' AND column_name = 'is_organic'
+  ) THEN
+    ALTER TABLE products ADD COLUMN is_organic BOOLEAN DEFAULT TRUE;
+  END IF;
+END $$;
+
+-- Update existing admin user if needed
 UPDATE users 
 SET full_name = 'Admin User', 
     phone = '+92 300 0000000'
