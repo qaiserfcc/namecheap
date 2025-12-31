@@ -3,9 +3,10 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getSessionCookie, verifySession } from "@/lib/sessions"
 
 // GET /api/products/[id] - get product with images and variants
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const productId = parseInt(params.id)
+    const resolvedParams = await params
+    const productId = parseInt(resolvedParams.id)
     
     const productResult = await query(`SELECT * FROM products WHERE id = $1`, [productId])
     
@@ -38,7 +39,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PATCH /api/products/[id] - update product with images and variants (admin only)
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
@@ -47,7 +48,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const productId = parseInt(params.id)
+    const resolvedParams = await params
+    const productId = parseInt(resolvedParams.id)
     const updates = await request.json()
 
     // Update product fields

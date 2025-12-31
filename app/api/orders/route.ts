@@ -132,32 +132,38 @@ export async function POST(request: NextRequest) {
     }
 
     const finalAmount = totalAmount - discountAmount
+  // Generate order number
+  const orderNumber = `ORD-${Date.now()}-${Math.random().toString(36).substr(2, 9).toUpperCase()}`
+
 
     const orderResult = await query(
-      `INSERT INTO orders (user_id, total_amount, shipping_address, town, promotion_id, promotion_code, discount_amount, final_amount) 
+      `INSERT INTO orders (order_number, user_id, total_amount, shipping_address, promotion_id, promotion_code, discount_amount, final_amount) 
        VALUES ($1, $2, $3, $4, $5, $6, $7, $8) RETURNING *`,
-      [session.userId, totalAmount, shippingAddress, town, promotionId, appliedCode, discountAmount, finalAmount]
+      [orderNumber, session.userId, totalAmount, shippingAddress, promotionId, appliedCode, discountAmount, finalAmount]
     )
 
     const orderId = orderResult[0].id
 
     // Insert order items
     for (const item of items) {
-      const productResult = await query("SELECT price FROM products WHERE id = $1", [item.productId])
+      const productResult = await query("SELECT price, name FROM products WHERE id = $1", [item.productId])
       if (productResult.length > 0) {
-        await query("INSERT INTO order_items (order_id, product_id, quantity, price) VALUES ($1, $2, $3, $4)", [
+        const subtotal = productResult[0].price * item.quantity
+        await query("INSERT INTO order_items (order_id, product_id, product_name, quantity, price, subtotal) VALUES ($1, $2, $3, $4, $5, $6)", [
           orderId,
           item.productId,
+                    productResult[0].name,
           item.quantity,
           productResult[0].price,
+                  subtotal,
         ])
       }
     }
 
     // Create initial order event
     await query(
-      `INSERT INTO order_events (order_id, status, notes) VALUES ($1, $2, $3)`,
-      [orderId, 'pending', 'Order created']
+      `INSERT INTO order_events (order_id, status) VALUES ($1, $2)`,
+      [orderId, 'pending']
     )
 
     return NextResponse.json(orderResult[0])

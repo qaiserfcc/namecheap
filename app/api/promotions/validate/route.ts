@@ -1,4 +1,4 @@
-import { sql } from "@neondatabase/serverless"
+import { query } from "@/lib/db"
 
 export async function GET(request: Request) {
   try {
@@ -12,21 +12,21 @@ export async function GET(request: Request) {
       )
     }
 
-    const result = await sql(
+    const result = await query(
       `SELECT id, code, discount_type, discount_value, max_discount, usage_limit, usage_count, min_order_amount, active, starts_at, ends_at
        FROM promotions
        WHERE code = $1 AND active = true`,
       [code.toUpperCase()]
     )
 
-    if (result.rows.length === 0) {
+    if (result.length === 0) {
       return Response.json(
         { error: "Invalid promo code" },
         { status: 404 }
       )
     }
 
-    const promo = result.rows[0]
+    const promo = result[0]
 
     // Check if promotion is still valid
     const now = new Date()

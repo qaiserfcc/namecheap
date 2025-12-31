@@ -1,9 +1,10 @@
 import { query } from "@/lib/db"
 import { type NextRequest, NextResponse } from "next/server"
 import { getSessionCookie, verifySession } from "@/lib/sessions"
+import bcryptjs from "bcryptjs"
 
 // GET /api/users/[id]
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
@@ -12,8 +13,9 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const userId = parseInt(params.id)
-    const result = await query(`SELECT id, name, email, role, created_at FROM users WHERE id = $1`, [userId])
+    const resolvedParams = await params
+    const userId = parseInt(resolvedParams.id)
+    const result = await query(`SELECT id, full_name as name, email, role, created_at FROM users WHERE id = $1`, [userId])
     
     if (result.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
@@ -26,7 +28,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PATCH /api/users/[id] - update user (admin only)
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
@@ -35,14 +37,15 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const userId = parseInt(params.id)
+    const resolvedParams = await params
+    const userId = parseInt(resolvedParams.id)
     const updates = await request.json()
 
     const fields: string[] = []
     const values: any[] = []
     let idx = 1
 
-    const allowedFields = ['name', 'email', 'role']
+    const allowedFields = ['full_name', 'email', 'role']
 
     for (const key of allowedFields) {
       if (key in updates) {
@@ -54,8 +57,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 
     // Handle password update separately
     if (updates.password) {
-      const bcrypt = require('bcrypt')
-      const hashedPassword = await bcrypt.hash(updates.password, 10)
+      const hashedPassword = await bcryptjs.hash(updates.password, 10)
       fields.push(`password = $${idx}`)
       values.push(hashedPassword)
       idx++
@@ -68,7 +70,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     values.push(userId)
 
     const result = await query(
-      `UPDATE users SET ${fields.join(', ')} WHERE id = $${idx} RETURNING id, name, email, role, created_at`,
+      `UPDATE users SET ${fields.join(', ')} WHERE id = $${idx} RETURNING id, full_name as name, email, role, created_at`,
       values
     )
 
@@ -83,7 +85,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 // DELETE /api/users/[id] - delete user (admin only)
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
@@ -92,7 +94,8 @@ export async function DELETE(request: NextRequest, { params }: { params: { id: s
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const userId = parseInt(params.id)
+    const resolvedParams = await params
+    const userId = parseInt(resolvedParams.id)
     
     // Prevent deleting self
     if (session.userId === userId) {

@@ -3,9 +3,10 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getSessionCookie, verifySession } from "@/lib/sessions"
 
 // GET /api/promotions/[id]
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
-    const promoId = parseInt(params.id)
+    const resolvedParams = await params
+    const promoId = parseInt(resolvedParams.id)
     const result = await query(`SELECT * FROM promotions WHERE id = $1`, [promoId])
     
     if (result.length === 0) {
@@ -19,7 +20,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
 }
 
 // PATCH /api/promotions/[id] - update promotion (admin only)
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
@@ -28,7 +29,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const promoId = parseInt(params.id)
+    const resolvedParams = await params
+    const promoId = parseInt(resolvedParams.id)
     const updates = await request.json()
 
     const fields: string[] = []
@@ -72,7 +74,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
 }
 
 // DELETE /api/promotions/[id] - delete promotion (admin only)
-export async function DELETE(request: NextRequest, { params }: { params: { id: string } }) {
+export async function DELETE(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
