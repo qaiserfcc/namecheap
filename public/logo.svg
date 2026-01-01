@@ -1,24 +1,27 @@
 <svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
-  <!-- Background badge shape -->
-  <rect x="2" y="2" width="196" height="56" rx="8" fill="#0f0f0f" stroke="#fbbf24" stroke-width="2"/>
+  <!-- Background -->
+  <rect width="200" height="60" fill="transparent"/>
   
-  <!-- Discount tag icon -->
-  <path d="M20 15L30 15C32 15 33 16 33 18L33 28C33 30 32 31 30 31L20 31C18 31 17 30 17 28L17 18C17 16 18 15 20 15Z" fill="#fbbf24"/>
-  <path d="M30 15L38 23L30 31" stroke="#fbbf24" stroke-width="2" stroke-linecap="round"/>
-  <circle cx="24" cy="23" r="2" fill="#0f0f0f"/>
+  <!-- Globe/Domain Icon -->
+  <circle cx="25" cy="30" r="16" fill="#FF6C0C" opacity="0.1"/>
+  <circle cx="25" cy="30" r="14" stroke="#FF6C0C" stroke-width="2.5" fill="none"/>
   
-  <!-- Percentage symbol -->
-  <text x="20" y="48" font-family="Arial, sans-serif" font-size="12" font-weight="bold" fill="#0ea5e9">%OFF</text>
+  <!-- Latitude lines -->
+  <ellipse cx="25" cy="30" rx="14" ry="4" stroke="#FF6C0C" stroke-width="1.5" fill="none"/>
+  <ellipse cx="25" cy="30" rx="14" ry="8" stroke="#FF6C0C" stroke-width="1" fill="none" opacity="0.6"/>
   
-  <!-- Brand name "NameCheap" -->
-  <text x="48" y="28" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#fbbf24">Name</text>
-  <text x="48" y="45" font-family="Arial, sans-serif" font-size="18" font-weight="bold" fill="#0ea5e9">Cheap</text>
+  <!-- Longitude line -->
+  <ellipse cx="25" cy="30" rx="4" ry="14" stroke="#FF6C0C" stroke-width="1.5" fill="none"/>
+  
+  <!-- Center dot -->
+  <circle cx="25" cy="30" r="2" fill="#FF6C0C"/>
+  
+  <!-- Brand name "Namecheap" -->
+  <text x="50" y="38" font-family="'Inter', 'Helvetica', 'Arial', sans-serif" font-size="24" font-weight="800" fill="#FF6C0C" letter-spacing="-0.5">Namecheap</text>
   
   <!-- Tagline -->
-  <text x="115" y="35" font-family="Arial, sans-serif" font-size="9" fill="#a3a3a3">Brands • Discounts • Quality</text>
+  <text x="51" y="48" font-family="'Inter', 'Helvetica', 'Arial', sans-serif" font-size="8" font-weight="500" fill="#9ca3af" letter-spacing="0.5">DOMAINS & HOSTING</text>
   
-  <!-- Decorative elements -->
-  <circle cx="180" cy="20" r="3" fill="#fbbf24" opacity="0.6"/>
-  <circle cx="190" cy="25" r="2" fill="#0ea5e9" opacity="0.6"/>
-  <circle cx="185" cy="32" r="2.5" fill="#fbbf24" opacity="0.4"/>
+  <!-- Accent dot on 'i' -->
+  <circle cx="118" cy="25" r="1.5" fill="#0ea5e9"/>
 </svg>

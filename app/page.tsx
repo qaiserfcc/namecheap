@@ -14,9 +14,14 @@ import {
   Sparkles, 
   Shield, 
   Truck, 
-  HeadphonesIcon, 
   Users,
-  Award
+  Award,
+  ChevronLeft,
+  ChevronRight,
+  Globe,
+  Target,
+  Heart,
+  Lightbulb
 } from "lucide-react"
 
 interface ProductImage {
@@ -150,7 +155,7 @@ function ProductCard({ product }: { product: Product }) {
             <span className="text-sm text-muted-foreground ml-1">({product.rating || 4.5})</span>
           </div>
           <div className="flex items-center justify-between mt-3">
-            <span className="text-2xl font-bold text-secondary">₹{product.price}</span>
+            <span className="text-2xl font-bold text-secondary">Rs. {product.price.toLocaleString()}</span>
             {product.variant_count && product.variant_count > 1 && (
               <span className="text-xs text-muted-foreground">{product.variant_count} variants</span>
             )}
@@ -181,6 +186,7 @@ function getCompanyValue(value: any): string | number {
 export default function Home() {
   const [dashboardData, setDashboardData] = useState<DashboardData | null>(null)
   const [loading, setLoading] = useState(true)
+  const [carouselIndex, setCarouselIndex] = useState(0)
 
   useEffect(() => {
     fetchDashboardData()
@@ -225,7 +231,7 @@ export default function Home() {
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
             <div>
               <h1 className="text-5xl font-bold mb-4 text-foreground">
-                {getCompanyValue(company?.name) || "CheapName"}
+                {getCompanyValue(company?.name) || "Namecheap"}
               </h1>
               <p className="text-2xl text-secondary font-bold mb-6">
                 {getCompanyValue(company?.tagline) || "Pure, Natural, Affordable"}
@@ -342,11 +348,58 @@ export default function Home() {
                   <Link href="/products?filter=featured">View All</Link>
                 </Button>
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-                {dashboardData.featured.slice(0, 6).map((product) => (
-                  <ProductCard key={product.id} product={product} />
-                ))}
-              </div>
+                {/* Carousel Container */}
+                <div className="relative">
+                  {/* Previous Button */}
+                  {dashboardData.featured.length > 3 && (
+                    <button
+                      onClick={() => setCarouselIndex((prev) => (prev === 0 ? Math.ceil(dashboardData.featured.length / 3) - 1 : prev - 1))}
+                      className="absolute left-0 top-1/2 -translate-y-1/2 -translate-x-4 z-10 bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:bg-primary/90 transition-all hover:scale-110"
+                      aria-label="Previous products"
+                    >
+                      <ChevronLeft className="h-6 w-6" />
+                    </button>
+                  )}
+
+                  {/* Carousel Track */}
+                  <div className="overflow-hidden">
+                    <div
+                      className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6 transition-transform duration-500 ease-in-out"
+                      style={{ transform: `translateX(-${carouselIndex * 100}%)` }}
+                    >
+                      {dashboardData.featured.map((product) => (
+                        <ProductCard key={product.id} product={product} />
+                      ))}
+                    </div>
+                  </div>
+
+                  {/* Next Button */}
+                  {dashboardData.featured.length > 3 && (
+                    <button
+                      onClick={() => setCarouselIndex((prev) => (prev === Math.ceil(dashboardData.featured.length / 3) - 1 ? 0 : prev + 1))}
+                      className="absolute right-0 top-1/2 -translate-y-1/2 translate-x-4 z-10 bg-primary text-primary-foreground p-3 rounded-full shadow-lg hover:bg-primary/90 transition-all hover:scale-110"
+                      aria-label="Next products"
+                    >
+                      <ChevronRight className="h-6 w-6" />
+                    </button>
+                  )}
+
+                  {/* Carousel Indicators */}
+                  {dashboardData.featured.length > 3 && (
+                    <div className="flex justify-center gap-2 mt-6">
+                      {Array.from({ length: Math.ceil(dashboardData.featured.length / 3) }).map((_, idx) => (
+                        <button
+                          key={idx}
+                          onClick={() => setCarouselIndex(idx)}
+                          className={`h-2 rounded-full transition-all ${
+                            idx === carouselIndex ? 'w-8 bg-primary' : 'w-2 bg-primary/30 hover:bg-primary/60'
+                          }`}
+                          aria-label={`Go to slide ${idx + 1}`}
+                        />
+                      ))}
+                    </div>
+                  )}
+                </div>
             </div>
           </section>
         )}
@@ -397,7 +450,7 @@ export default function Home() {
                         {cat.product_count} {cat.product_count === 1 ? 'product' : 'products'}
                       </p>
                       <p className="text-sm text-muted-foreground">
-                        From ₹{Math.round(cat.min_price)} to ₹{Math.round(cat.max_price)}
+                        From Rs. {Math.round(cat.min_price).toLocaleString()} to Rs. {Math.round(cat.max_price).toLocaleString()}
                       </p>
                     </Card>
                   </Link>
@@ -408,54 +461,91 @@ export default function Home() {
         )}
 
         {/* Company Info & Support Section */}
-        <section className="bg-gradient-to-br from-secondary/10 via-card to-primary/10 py-16 border-y-2 border-secondary/20">
+        {/* About Namecheap Section */}
+        <section className="bg-gradient-to-br from-secondary/10 via-card to-primary/10 py-20 border-y-2 border-secondary/20">
           <div className="container mx-auto px-4">
+            <div className="text-center mb-12">
+              <h2 className="text-4xl font-bold mb-4">About Namecheap</h2>
+              <p className="text-xl text-muted-foreground max-w-3xl mx-auto">
+                Your trusted partner in building a successful online presence
+              </p>
+            </div>
+
+            {company && (
+              <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8 mb-12">
+                <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-card border-2 border-primary/30 hover:shadow-xl transition-shadow">
+                  <Globe className="h-12 w-12 mx-auto mb-4 text-primary" />
+                  <h3 className="text-lg font-semibold mb-2">Global Reach</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Serving customers worldwide with domains, hosting, and security solutions
+                  </p>
+                </Card>
+                
+                <Card className="p-6 text-center bg-gradient-to-br from-secondary/10 to-card border-2 border-secondary/30 hover:shadow-xl transition-shadow">
+                  <Target className="h-12 w-12 mx-auto mb-4 text-secondary" />
+                  <h3 className="text-lg font-semibold mb-2">Mission Driven</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {getCompanyValue(company.mission) || "Making the web accessible and affordable for everyone"}
+                  </p>
+                </Card>
+                
+                <Card className="p-6 text-center bg-gradient-to-br from-accent/10 to-card border-2 border-accent/30 hover:shadow-xl transition-shadow">
+                  <Heart className="h-12 w-12 mx-auto mb-4 text-accent" />
+                  <h3 className="text-lg font-semibold mb-2">Customer First</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Dedicated to providing exceptional service and support to all our customers
+                  </p>
+                </Card>
+                
+                <Card className="p-6 text-center bg-gradient-to-br from-primary/10 to-card border-2 border-primary/30 hover:shadow-xl transition-shadow">
+                  <Lightbulb className="h-12 w-12 mx-auto mb-4 text-primary" />
+                  <h3 className="text-lg font-semibold mb-2">Innovation</h3>
+                  <p className="text-sm text-muted-foreground">
+                    Constantly evolving our services to meet the changing needs of the digital world
+                  </p>
+                </Card>
+              </div>
+            )}
+
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
-              {/* Company Info */}
-              {company && (
-                <div>
-                  <h2 className="text-3xl font-bold mb-6">About {typeof company.name === 'object' ? company.name?.value : company.name}</h2>
-                  <div className="space-y-4">
-                    <div>
-                      <h3 className="text-xl font-semibold text-secondary mb-2">Our Mission</h3>
-                      <p className="text-muted-foreground">{typeof company.mission === 'object' ? company.mission?.value : company.mission}</p>
-                    </div>
-                    <div>
-                      <h3 className="text-xl font-semibold text-primary mb-2">Our Vision</h3>
-                      <p className="text-muted-foreground">{typeof company.vision === 'object' ? company.vision?.value : company.vision}</p>
-                    </div>
-                    <div className="pt-4">
-                      <p className="text-sm text-muted-foreground">
-                        Serving customers since {typeof company.founded_year === 'object' ? company.founded_year?.value : company.founded_year}
-                      </p>
-                    </div>
+              <Card className="p-8 bg-gradient-to-br from-card to-primary/5 border-2 border-primary/20">
+                <h3 className="text-2xl font-bold mb-4 text-primary">Our Story</h3>
+                <p className="text-muted-foreground mb-4">
+                  Since {getCompanyValue(company?.founded_year) || "2000"}, Namecheap has been empowering individuals and businesses 
+                  to establish their online presence. What started as a vision to make domain registration affordable 
+                  has grown into a comprehensive platform offering domains, hosting, security, and more.
+                </p>
+                <p className="text-muted-foreground">
+                  We believe that everyone deserves access to the tools needed to succeed online, which is why 
+                  we're committed to providing premium services at prices that won't break the bank.
+                </p>
+              </Card>
+
+              <Card className="p-8 bg-gradient-to-br from-card to-secondary/5 border-2 border-secondary/20">
+                <h3 className="text-2xl font-bold mb-4 text-secondary">Our Vision</h3>
+                <p className="text-muted-foreground mb-4">
+                  {getCompanyValue(company?.vision) || "To be the world's most trusted and affordable platform for online success"}
+                </p>
+                <p className="text-muted-foreground mb-4">
+                  We envision a future where anyone, anywhere can turn their ideas into reality through 
+                  accessible technology and exceptional service. Our commitment extends beyond just providing 
+                  services – we're here to be your partner in growth.
+                </p>
+                <div className="grid grid-cols-3 gap-4 mt-6 pt-6 border-t border-border">
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-secondary">{(getCompanyValue(company?.total_customers) || "10M").toLocaleString()}+</div>
+                    <div className="text-xs text-muted-foreground mt-1">Customers</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-primary">{new Date().getFullYear() - (parseInt(getCompanyValue(company?.founded_year)?.toString() || "2000"))}+</div>
+                    <div className="text-xs text-muted-foreground mt-1">Years</div>
+                  </div>
+                  <div className="text-center">
+                    <div className="text-2xl font-bold text-accent">{getCompanyValue(company?.satisfaction_rate) || "98"}%</div>
+                    <div className="text-xs text-muted-foreground mt-1">Satisfaction</div>
                   </div>
                 </div>
-              )}
-
-              {/* Support Info */}
-              <div>
-                <h2 className="text-3xl font-bold mb-6">Customer Support</h2>
-                <div className="space-y-4">
-                  {support.map((item, idx) => (
-                    <Card key={idx} className="p-4 bg-card border-2 border-primary/30 shadow-lg shadow-primary/10">
-                      <div className="flex items-start gap-3">
-                        <HeadphonesIcon className="h-6 w-6 text-primary mt-1" />
-                        <div>
-                          <h3 className="font-semibold mb-1 capitalize">{item.contact_type}</h3>
-                          <p className="text-foreground">{item.contact_value}</p>
-                          {item.description && (
-                            <p className="text-sm text-muted-foreground mt-1">{item.description}</p>
-                          )}
-                          {item.is_available_24_7 && (
-                            <p className="text-xs text-secondary mt-1 font-semibold">Available 24/7</p>
-                          )}
-                        </div>
-                      </div>
-                    </Card>
-                  ))}
-                </div>
-              </div>
+              </Card>
             </div>
           </div>
         </section>
@@ -486,7 +576,7 @@ export default function Home() {
             </div>
             <div className="flex flex-col items-center">
               <div className="bg-primary/20 border-2 border-primary/30 p-4 rounded-full mb-3">
-                <HeadphonesIcon className="h-8 w-8 text-primary" />
+                  <Shield className="h-8 w-8 text-primary" />
               </div>
               <h3 className="font-semibold mb-1">24/7 Support</h3>
               <p className="text-sm text-muted-foreground">Always here to help</p>
@@ -500,10 +590,10 @@ export default function Home() {
             <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
               <div>
                 <h3 className="text-xl font-bold mb-4">
-                  {company?.name || "CheapName"}
+                  {getCompanyValue(company?.name) || "Namecheap"}
                 </h3>
                 <p className="text-muted-foreground">
-                  {company?.tagline || "Pure, Natural, Affordable"}
+                  {getCompanyValue(company?.tagline) || "Your Trusted Domain & Hosting Partner"}
                 </p>
               </div>
               <div>
@@ -536,7 +626,7 @@ export default function Home() {
               </div>
             </div>
             <div className="border-t border-border pt-8 text-center text-muted-foreground">
-              <p>&copy; {new Date().getFullYear()} {company?.name || "CheapName"}. All rights reserved.</p>
+              <p>&copy; {new Date().getFullYear()} {getCompanyValue(company?.name) || "Namecheap"}. All rights reserved.</p>
             </div>
           </div>
         </footer>
