@@ -52,7 +52,7 @@ WHERE al.user_id > 0
 ORDER BY al.created_at DESC
 LIMIT 100;
 
--- Create materialized view for analytics performance
+-- Create materialized view for analytics performance (single row summary)
 CREATE MATERIALIZED VIEW IF NOT EXISTS mv_analytics_summary AS
 SELECT
   -- Revenue metrics
@@ -81,16 +81,16 @@ SELECT
   -- Promotion metrics
   (SELECT COUNT(*) FROM promotions WHERE active = true AND (ends_at IS NULL OR ends_at >= CURRENT_TIMESTAMP)) as active_promotions,
   
-  CURRENT_TIMESTAMP as refreshed_at,
-  1 as id; -- Add static ID for unique index
+  CURRENT_TIMESTAMP as refreshed_at;
 
--- Create unique index on id column for regular refresh (single row view)
-CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_analytics_id ON mv_analytics_summary(id);
+-- Note: No unique index needed for single-row materialized view with regular REFRESH
+-- Regular REFRESH is atomic and doesn't require a unique index
 
--- Create function to refresh analytics (regular refresh for single-row view)
+-- Create function to refresh analytics
 CREATE OR REPLACE FUNCTION refresh_analytics_summary()
 RETURNS void AS $$
 BEGIN
+  -- Use regular REFRESH since this is always a single-row summary
   REFRESH MATERIALIZED VIEW mv_analytics_summary;
 END;
 $$ LANGUAGE plpgsql;

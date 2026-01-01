@@ -158,12 +158,14 @@ export const updatePromotionSchema = z.object({
 /**
  * Helper to validate and parse number from string
  */
-function parseNumberSafe(value: string, fieldName: string, allowNegative = false): number | typeof z.NEVER {
+function parseNumberSafe(value: string, fieldName: string, mustBePositive = true): number | typeof z.NEVER {
   const num = parseFloat(value)
-  if (isNaN(num) || (!allowNegative && num < 0) || (allowNegative && num <= 0)) {
-    const message = allowNegative 
+  const isInvalid = isNaN(num) || (mustBePositive ? num <= 0 : num < 0)
+  
+  if (isInvalid) {
+    const message = mustBePositive 
       ? `${fieldName} must be a valid positive number`
-      : `${fieldName} must be a valid non-negative number`
+      : `${fieldName} must be a valid number (cannot be negative)`
     throw new z.ZodError([{
       code: z.ZodIssueCode.custom,
       message,
@@ -191,7 +193,7 @@ function parseIntSafe(value: string | number, fieldName: string): number | typeo
 export const bulkUploadProductSchema = z.object({
   name: z.string().min(1).max(255).trim(),
   description: z.string().max(5000).trim().optional(),
-  price: z.string().transform((val) => parseNumberSafe(val, "price", true)),
+  price: z.string().transform((val) => parseNumberSafe(val, "price", true)), // mustBePositive = true
   category: z.string().min(1).max(100).trim(),
   stock_quantity: z
     .union([z.string(), z.number()])
