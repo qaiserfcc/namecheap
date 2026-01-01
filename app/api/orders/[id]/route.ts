@@ -3,7 +3,7 @@ import { type NextRequest, NextResponse } from "next/server"
 import { getSessionCookie, verifySession } from "@/lib/sessions"
 
 // GET /api/orders/[id] - get order with items and events
-export async function GET(request: NextRequest, { params }: { params: { id: string } }) {
+export async function GET(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
@@ -12,7 +12,8 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    const orderId = parseInt(params.id)
+    const resolvedParams = await params
+    const orderId = parseInt(resolvedParams.id)
     
     // Fetch order
     const orderResult = await query(`SELECT * FROM orders WHERE id = $1`, [orderId])
@@ -53,7 +54,7 @@ export async function GET(request: NextRequest, { params }: { params: { id: stri
   }
 }
 
-export async function PATCH(request: NextRequest, { params }: { params: { id: string } }) {
+export async function PATCH(request: NextRequest, { params }: { params: Promise<{ id: string }> }) {
   try {
     const sessionToken = await getSessionCookie()
     const session = await verifySession(sessionToken!)
@@ -63,7 +64,8 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     }
 
     const updates = await request.json()
-    const orderId = Number.parseInt(params.id)
+    const resolvedParams = await params
+    const orderId = Number.parseInt(resolvedParams.id)
 
     const fields: string[] = []
     const values: any[] = []
@@ -98,7 +100,7 @@ export async function PATCH(request: NextRequest, { params }: { params: { id: st
     // Create order event if status changed
     if (updates.status) {
       await query(
-        `INSERT INTO order_events (order_id, status, notes) VALUES ($1, $2, $3)`,
+        `INSERT INTO order_events (order_id, status, note) VALUES ($1, $2, $3)`,
         [orderId, updates.status, updates.eventNotes || `Status updated to ${updates.status}`]
       )
     }

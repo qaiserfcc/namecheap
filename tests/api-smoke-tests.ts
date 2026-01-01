@@ -459,15 +459,55 @@ async function testOrdersPost() {
 }
 
 async function testOrdersGetById() {
-  // Endpoint not implemented
-  addResult('GET /api/orders/[id]', 'SKIP', 'Endpoint not implemented')
-  return false
+  if (!testOrderId) {
+    addResult('GET /api/orders/[id]', 'SKIP', 'No order ID available')
+    return false
+  }
+
+  try {
+    const res = await makeRequest('GET', `/api/orders/${testOrderId}`, null, authToken)
+
+    if (res.status === 200 && res.data?.id) {
+      addResult('GET /api/orders/[id]', 'PASS', `Retrieved order ${res.data.order_number || res.data.id}`, res.time)
+      return true
+    } else {
+      addResult('GET /api/orders/[id]', 'FAIL', `Status: ${res.status}`, res.time)
+      return false
+    }
+  } catch (error: any) {
+    addResult('GET /api/orders/[id]', 'FAIL', error.message)
+    return false
+  }
 }
 
 async function testOrdersPut() {
-  // Endpoint not implemented
-  addResult('PUT /api/orders/[id]', 'SKIP', 'Endpoint not implemented (405)')
-  return false
+  if (!testOrderId) {
+    addResult('PATCH /api/orders/[id]', 'SKIP', 'No order ID available')
+    return false
+  }
+
+  try {
+    const res = await makeRequest(
+      'PATCH',
+      `/api/orders/${testOrderId}`,
+      {
+        status: 'confirmed',
+        notes: 'Order confirmed via smoke test',
+      },
+      authToken
+    )
+
+    if (res.status === 200) {
+      addResult('PATCH /api/orders/[id]', 'PASS', 'Order updated successfully', res.time)
+      return true
+    } else {
+      addResult('PATCH /api/orders/[id]', 'FAIL', `Status: ${res.status}`, res.time)
+      return false
+    }
+  } catch (error: any) {
+    addResult('PATCH /api/orders/[id]', 'FAIL', error.message)
+    return false
+  }
 }
 
 // ==================== USERS API TESTS ====================

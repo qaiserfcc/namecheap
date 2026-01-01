@@ -12,104 +12,75 @@ export async function GET(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
-    // Revenue metrics
-    const revenueToday = await query(
-      `SELECT COALESCE(SUM(final_amount), 0) as total FROM orders WHERE DATE(created_at) = CURRENT_DATE`
-    )
-    const revenueThisWeek = await query(
-      `SELECT COALESCE(SUM(final_amount), 0) as total FROM orders WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'`
-    )
-    const revenueThisMonth = await query(
-      `SELECT COALESCE(SUM(final_amount), 0) as total FROM orders WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)`
-    )
-    const revenueTotal = await query(
-      `SELECT COALESCE(SUM(final_amount), 0) as total FROM orders`
-    )
+    const [
+      revenueToday,
+      revenueThisWeek,
+      revenueThisMonth,
+      revenueTotal,
+      ordersToday,
+      ordersThisWeek,
+      ordersThisMonth,
+      ordersTotal,
+      avgOrderValue,
+      topProducts,
+      revenueByDay,
+      ordersByStatus,
+      totalUsers,
+      newUsersThisMonth,
+      repeatBuyers,
+      totalProducts,
+      lowStockProducts,
+      activePromotions,
+      promotionUsage,
+    ] = await Promise.all([
+      query(`SELECT COALESCE(SUM(final_amount), 0) as total FROM orders WHERE DATE(created_at) = CURRENT_DATE`),
+      query(`SELECT COALESCE(SUM(final_amount), 0) as total FROM orders WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'`),
+      query(`SELECT COALESCE(SUM(final_amount), 0) as total FROM orders WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)`),
+      query(`SELECT COALESCE(SUM(final_amount), 0) as total FROM orders`),
+      query(`SELECT COUNT(*) as count FROM orders WHERE DATE(created_at) = CURRENT_DATE`),
+      query(`SELECT COUNT(*) as count FROM orders WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'`),
+      query(`SELECT COUNT(*) as count FROM orders WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)`),
+      query(`SELECT COUNT(*) as count FROM orders`),
+      query(`SELECT COALESCE(AVG(final_amount), 0) as avg FROM orders`),
+      query(`SELECT p.id, p.name, p.image_url, SUM(oi.quantity) as total_sold, SUM(oi.quantity * oi.price) as revenue
+             FROM order_items oi
+             JOIN products p ON oi.product_id = p.id
+             GROUP BY p.id, p.name, p.image_url
+             ORDER BY revenue DESC
+             LIMIT 10`),
+      query(`SELECT DATE(created_at) as date, COALESCE(SUM(final_amount), 0) as revenue
+             FROM orders
+             WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
+             GROUP BY DATE(created_at)
+             ORDER BY date ASC`),
+      query(`SELECT status, COUNT(*) as count FROM orders GROUP BY status`),
+      query(`SELECT COUNT(*) as count FROM users WHERE role = 'buyer'`),
+      query(`SELECT COUNT(*) as count FROM users WHERE role = 'buyer' AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)`),
+      query(`SELECT COUNT(*) as count FROM (
+               SELECT user_id FROM orders GROUP BY user_id HAVING COUNT(*) > 1
+             ) sub`),
+      query(`SELECT COUNT(*) as count FROM products`),
+      query(`SELECT COUNT(*) as count FROM products WHERE stock_quantity < 10`),
+      query(`SELECT COUNT(*) as count FROM promotions WHERE active = true AND (ends_at IS NULL OR ends_at >= CURRENT_TIMESTAMP)`),
+      query(`SELECT p.name, p.code, p.discount_type, p.discount_value, COUNT(o.id) as times_used, COALESCE(SUM(o.discount_amount), 0) as total_discount
+             FROM promotions p
+             LEFT JOIN orders o ON p.id = o.promotion_id
+             WHERE p.active = true
+             GROUP BY p.id, p.name, p.code, p.discount_type, p.discount_value
+             ORDER BY times_used DESC
+             LIMIT 10`),
+    ])
 
-    // Order metrics
-    const ordersToday = await query(
-      `SELECT COUNT(*) as count FROM orders WHERE DATE(created_at) = CURRENT_DATE`
-    )
-    const ordersThisWeek = await query(
-      `SELECT COUNT(*) as count FROM orders WHERE created_at >= CURRENT_DATE - INTERVAL '7 days'`
-    )
-    const ordersThisMonth = await query(
-      `SELECT COUNT(*) as count FROM orders WHERE DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)`
-    )
-    const ordersTotal = await query(
-      `SELECT COUNT(*) as count FROM orders`
-    )
-
-    // Average order value
-    const avgOrderValue = await query(
-      `SELECT COALESCE(AVG(final_amount), 0) as avg FROM orders`
-    )
-
-    // Top products by revenue
-    const topProducts = await query(
-      `SELECT p.id, p.name, p.image_url, SUM(oi.quantity) as total_sold, SUM(oi.quantity * oi.price) as revenue
-       FROM order_items oi
-       JOIN products p ON oi.product_id = p.id
-       GROUP BY p.id, p.name, p.image_url
-       ORDER BY revenue DESC
-       LIMIT 10`
-    )
-
-    // Revenue by day (last 30 days)
-    const revenueByDay = await query(
-      `SELECT DATE(created_at) as date, COALESCE(SUM(final_amount), 0) as revenue
-       FROM orders
-       WHERE created_at >= CURRENT_DATE - INTERVAL '30 days'
-       GROUP BY DATE(created_at)
-       ORDER BY date ASC`
-    )
-
-    // Orders by status
-    const ordersByStatus = await query(
-      `SELECT status, COUNT(*) as count
-       FROM orders
-       GROUP BY status`
-    )
-
-    // User metrics
-    const totalUsers = await query(
-      `SELECT COUNT(*) as count FROM users WHERE role = 'buyer'`
-    )
-    const newUsersThisMonth = await query(
-      `SELECT COUNT(*) as count FROM users WHERE role = 'buyer' AND DATE_TRUNC('month', created_at) = DATE_TRUNC('month', CURRENT_DATE)`
-    )
-    const repeatBuyers = await query(
-      `SELECT COUNT(DISTINCT user_id) as count FROM orders GROUP BY user_id HAVING COUNT(*) > 1`
-    )
-
-    // Product metrics
-    const totalProducts = await query(
-      `SELECT COUNT(*) as count FROM products`
-    )
-    const lowStockProducts = await query(
-      `SELECT COUNT(*) as count FROM products WHERE stock < 10`
-    )
-
-    // Promotion metrics
-    const activePromotions = await query(
-      `SELECT COUNT(*) as count FROM promotions WHERE active = true AND (ends_at IS NULL OR ends_at >= CURRENT_TIMESTAMP)`
-    )
-    const promotionUsage = await query(
-      `SELECT p.name, p.code, p.discount_type, p.discount_value, COUNT(o.id) as times_used, COALESCE(SUM(o.discount_amount), 0) as total_discount
-       FROM promotions p
-       LEFT JOIN orders o ON p.id = o.promotion_id
-       WHERE p.active = true
-       GROUP BY p.id, p.name, p.code, p.discount_type, p.discount_value
-       ORDER BY times_used DESC
-       LIMIT 10`
-    )
+    const totalRevenue = parseFloat(revenueTotal[0].total)
 
     return NextResponse.json({
+      // Keep legacy top-level key for compatibility with tests/clients expecting totalRevenue
+      totalRevenue,
       revenue: {
         today: parseFloat(revenueToday[0].total),
         thisWeek: parseFloat(revenueThisWeek[0].total),
         thisMonth: parseFloat(revenueThisMonth[0].total),
-        total: parseFloat(revenueTotal[0].total),
+        total: totalRevenue,
         byDay: revenueByDay.map((row: any) => ({
           date: row.date,
           revenue: parseFloat(row.revenue)
@@ -140,7 +111,7 @@ export async function GET(request: NextRequest) {
       users: {
         total: parseInt(totalUsers[0].count),
         newThisMonth: parseInt(newUsersThisMonth[0].count),
-        repeatBuyers: repeatBuyers.length > 0 ? parseInt(repeatBuyers[0].count) : 0
+        repeatBuyers: repeatBuyers[0]?.count ? parseInt(repeatBuyers[0].count) : 0
       },
       promotions: {
         active: parseInt(activePromotions[0].count),

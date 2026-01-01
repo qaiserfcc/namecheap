@@ -99,6 +99,26 @@ BEGIN
   ) THEN
     ALTER TABLE orders ADD COLUMN notes TEXT;
   END IF;
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name='orders' AND column_name='order_number'
+  ) THEN
+    ALTER TABLE orders ADD COLUMN order_number VARCHAR(50) UNIQUE;
+  END IF;
+END $$;
+
+-- Add product_name to order_items for historical tracking
+DO $$
+BEGIN
+  IF NOT EXISTS (
+    SELECT 1 FROM information_schema.columns WHERE table_name='order_items' AND column_name='product_name'
+  ) THEN
+    ALTER TABLE order_items ADD COLUMN product_name VARCHAR(255);
+    IF NOT EXISTS (
+      SELECT 1 FROM information_schema.columns WHERE table_name='order_items' AND column_name='subtotal'
+    ) THEN
+      ALTER TABLE order_items ADD COLUMN subtotal NUMERIC(10,2);
+    END IF;
+  END IF;
 END $$;
 
 -- Order events for manual tracking history
