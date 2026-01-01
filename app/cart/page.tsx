@@ -9,6 +9,8 @@ import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
 import { Input } from "@/components/ui/input"
 import { Trash2, ShoppingCart } from "lucide-react"
+import { CartItemSkeleton } from "@/components/skeletons"
+import { useToast } from "@/hooks/use-toast"
 
 interface CartItem {
   product_id: number
@@ -34,6 +36,7 @@ export default function CartPage() {
   const [appliedPromo, setAppliedPromo] = useState<Promotion | null>(null)
   const [promoError, setPromoError] = useState("")
   const [loading, setLoading] = useState(true)
+  const { toast } = useToast()
 
   useEffect(() => {
     loadCart()
@@ -78,12 +81,24 @@ export default function CartPage() {
     )
     setCart(updated)
     localStorage.setItem("cart", JSON.stringify(updated))
+    
+    // Dispatch event for header cart count
+    window.dispatchEvent(new Event("storage"))
+    
+    toast({
+      title: "Item Removed",
+      description: "Product has been removed from your cart"
+    })
   }
 
   async function applyPromoCode(e: React.FormEvent) {
     e.preventDefault()
     if (!promoCode.trim()) {
-      setPromoError("Please enter a promo code")
+      toast({
+        title: "Error",
+        description: "Please enter a promo code",
+        variant: "destructive"
+      })
       return
     }
 
@@ -93,13 +108,27 @@ export default function CartPage() {
         const promo = await response.json()
         setAppliedPromo(promo)
         setPromoError("")
+        toast({
+          title: "Promo Code Applied!",
+          description: `You saved with code: ${promo.code}`
+        })
       } else {
         setPromoError("Invalid or expired promo code")
         setAppliedPromo(null)
+        toast({
+          title: "Invalid Code",
+          description: "This promo code is invalid or has expired",
+          variant: "destructive"
+        })
       }
     } catch (error) {
       setPromoError("Failed to validate promo code")
       console.error(error)
+      toast({
+        title: "Error",
+        description: "Failed to validate promo code",
+        variant: "destructive"
+      })
     }
   }
 
@@ -126,7 +155,21 @@ export default function CartPage() {
   const total = Math.max(0, subtotal - discount)
 
   if (loading) {
-    return <div className="p-8 text-center text-muted-foreground">Loading cart...</div>
+    return (
+      <>
+        <Header />
+        <div className="p-8">
+          <h1 className="text-3xl font-bold text-foreground mb-8">Shopping Cart</h1>
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
+            <div className="lg:col-span-2 space-y-4">
+              {[1, 2, 3].map((i) => (
+                <CartItemSkeleton key={i} />
+              ))}
+            </div>
+          </div>
+        </div>
+      </>
+    )
   }
 
   if (cart.length === 0) {

@@ -4,9 +4,15 @@ import type React from "react"
 import { useEffect, useState } from "react"
 import { useParams } from "next/navigation"
 import Image from "next/image"
+import Link from "next/link"
+import Header from "@/app/components/Header"
 import { Button } from "@/components/ui/button"
 import { Card } from "@/components/ui/card"
-import { ChevronLeft, ChevronRight, ShoppingCart, Star } from "lucide-react"
+import { ChevronLeft, ChevronRight, ShoppingCart, Star, Share2, Package, Truck, Shield } from "lucide-react"
+import ProductReviews from "@/components/reviews/ProductReviews"
+import WishlistButton from "@/components/wishlist/WishlistButton"
+import { ProductDetailSkeleton } from "@/components/skeletons"
+import { useToast } from "@/hooks/use-toast"
 
 interface ProductImage {
   id: number
@@ -39,6 +45,8 @@ interface Product {
   images?: ProductImage[]
   product_variants?: Variant[]
   variants?: Variant[]
+  average_rating?: number
+  review_count?: number
 }
 
 export default function ProductDetailPage() {
@@ -50,6 +58,7 @@ export default function ProductDetailPage() {
   const [quantity, setQuantity] = useState(1)
   const [loading, setLoading] = useState(true)
   const [error, setError] = useState("")
+  const { toast } = useToast()
 
   useEffect(() => {
     fetchProduct()
@@ -119,28 +128,98 @@ export default function ProductDetailPage() {
     }
 
     localStorage.setItem("cart", JSON.stringify(cart))
-    alert("Added to cart!")
+    
+    // Dispatch storage event for cart count update
+    window.dispatchEvent(new Event("storage"))
+    
+    toast({
+      title: "Added to Cart!",
+      description: `${product?.name} has been added to your cart`
+    })
+    
     setQuantity(1)
   }
 
+  async function handleShare() {
+    const url = window.location.href
+    
+    if (navigator.share) {
+      try {
+        await navigator.share({
+          title: product?.name,
+          text: product?.description,
+          url: url
+        })
+      } catch (error) {
+        // User cancelled or share failed
+      }
+    } else {
+      // Fallback: copy to clipboard
+      try {
+        await navigator.clipboard.writeText(url)
+        toast({
+          title: "Link Copied!",
+          description: "Product link has been copied to clipboard"
+        })
+      } catch (error) {
+        toast({
+          title: "Error",
+          description: "Failed to copy link",
+          variant: "destructive"
+        })
+      }
+    }
+  }
+
   if (loading) {
-    return <div className="p-8 text-center text-muted-foreground">Loading product...</div>
+    return (
+      <>
+        <Header />
+        <ProductDetailSkeleton />
+      </>
+    )
   }
 
   if (error || !product) {
     return (
-      <div className="p-8 text-center text-destructive">
-        <p>{error || "Product not found"}</p>
-      </div>
+      <>
+        <Header />
+        <div className="p-8 text-center">
+          <p className="text-destructive mb-4">{error || "Product not found"}</p>
+          <Link href="/products">
+            <Button className="bg-primary hover:bg-primary/90 text-primary-foreground">
+              Back to Products
+            </Button>
+          </Link>
+        </div>
+      </>
     )
   }
 
   const currentImage = product.product_images[selectedImageIndex]
   const displayPrice = selectedVariant?.price_override || product.price
+  const displayStock = selectedVariant?.stock || product.stock
 
   return (
-    <div className="p-8">
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto">
+    <>
+      <Header />
+      <div className="p-4 md:p-8">
+        {/* Breadcrumb */}
+        <div className="max-w-6xl mx-auto mb-4">
+          <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+            <Link href="/" className="hover:text-foreground">Home</Link>
+            <span>/</span>
+            <Link href="/products" className="hover:text-foreground">Products</Link>
+            <span>/</span>
+            <Link href={`/products?category=${product.category}`} className="hover:text-foreground">
+              {product.category}
+            </Link>
+            <span>/</span>
+            <span className="text-foreground">{product.name}</span>
+          </nav>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-8 max-w-6xl mx-auto mb-12">
         {/* Image Carousel */}
         <div>
           <div className="relative bg-muted rounded-lg overflow-hidden mb-4 aspect-square flex items-center justify-center">
@@ -202,7 +281,52 @@ export default function ProductDetailPage() {
           <div>
             <p className="text-sm text-muted-foreground mb-2">Category: {product.category}</p>
             <h1 className="text-3xl font-bold text-foreground mb-2">{product.name}</h1>
+            
+            {/* Rating */}
+            {product.review_count && product.review_count > 0 && (
+              <div className="flex items-center gap-2 mb-3">
+                <div className="flex gap-1">
+                  {[1, 2, 3, 4, 5].map((star) => (
+                    <Star
+                      key={star}
+                      size={20}
+                      className={
+                        star <= Math.round(product.average_rating || 0)
+                          ? "fill-yellow-400 text-yellow-400"
+                          : "text-muted-foreground"
+                      }
+                    />
+                  ))}
+                </div>
+                <span className="text-sm text-foreground font-semibold">
+                  {product.average_rating?.toFixed(1)}
+                </span>
+                <span className="text-sm text-muted-foreground">
+                  ({product.review_count} {product.review_count === 1 ? 'review' : 'reviews'})
+                </span>
+              </div>
+            )}
+            
             <p className="text-muted-foreground leading-relaxed">{product.description}</p>
+          </div>
+
+          {/* Action Buttons Row */}
+          <div className="flex gap-2">
+            <WishlistButton 
+              productId={product.id} 
+              variantId={selectedVariant?.id}
+              size="lg"
+              showText
+            />
+            <Button
+              onClick={handleShare}
+              variant="outline"
+              size="lg"
+              className="flex-1 border-border hover:border-primary"
+            >
+              <Share2 size={20} className="mr-2" />
+              Share
+            </Button>
           </div>
 
           {/* Price and Stock */}
@@ -330,8 +454,40 @@ export default function ProductDetailPage() {
               </div>
             </div>
           </Card>
+
+          {/* Trust Badges */}
+          <div className="grid grid-cols-3 gap-4 pt-4 border-t border-border">
+            <div className="text-center">
+              <div className="flex justify-center mb-2">
+                <Shield className="h-8 w-8 text-primary" />
+              </div>
+              <p className="text-xs text-muted-foreground">Secure Payment</p>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-2">
+                <Truck className="h-8 w-8 text-primary" />
+              </div>
+              <p className="text-xs text-muted-foreground">Fast Delivery</p>
+            </div>
+            <div className="text-center">
+              <div className="flex justify-center mb-2">
+                <Package className="h-8 w-8 text-primary" />
+              </div>
+              <p className="text-xs text-muted-foreground">Easy Returns</p>
+            </div>
+          </div>
         </div>
       </div>
-    </div>
+
+      {/* Reviews Section */}
+      <div className="max-w-6xl mx-auto mt-12">
+        <ProductReviews 
+          productId={product.id} 
+          averageRating={product.average_rating}
+          reviewCount={product.review_count}
+        />
+      </div>
+      </div>
+    </>
   )
 }
