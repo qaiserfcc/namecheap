@@ -42,7 +42,7 @@ Frontend
 
 
 Next.js (React, SSR, SEO enabled)
-Brand-based routing: /brands → /chiltan-pure → /product/{slug}
+Brand-based routing:/brands → /chiltan-pure → /product/{slug}
 
 
 
@@ -86,7 +86,7 @@ Cloud-agnostic (AWS / Azure compatible)
 
 Development
 
-DATABASE_URL="postgresql://neondb_owner:npg_nsTw81MrgcZR@ep-proud-feather-ahkn2tk4-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+DATABASE_URL="postgresql://neondb_owner:npg_nsTw81MrgcZR@ep-floral-shape-ahe8st7e-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
 
 Production
 
@@ -164,17 +164,17 @@ enum UserRole {
 Core Roles
 
 
-SUPER_ADMIN 
+SUPER_ADMIN
 Manage brands
 Global reports
 Audit pricing
 
-BRAND_ADMIN 
+BRAND_ADMIN
 Manage products
 Set official vs discounted prices
 View brand orders
 
-CUSTOMER 
+CUSTOMER
 Browse brands
 Compare prices
 Place orders
@@ -198,7 +198,7 @@ FINANCE (read-only transactions)
 
 Every API query MUST include brandId filtering.
 BRAND_ADMIN, MANAGER, FINANCE, WAREHOUSE cannot access other brands.
-Enforce via: 
+Enforce via:
 Prisma middleware
 Guarded service layer
 
@@ -249,7 +249,7 @@ Only enabled features appear in UI.
 
 
 Brand-specific checkout flows
-Prisma transactions for: 
+Prisma transactions for:
 Order creation
 Inventory update
 Payment status
@@ -300,7 +300,7 @@ Page load < 2s
 
 
 Use Prisma Migrate
-Seed data must include: 
+Seed data must include:
 Brand: Chiltan Pure
 Products with official & discounted prices
 Brand Admin user

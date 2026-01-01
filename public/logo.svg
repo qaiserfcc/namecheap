@@ -1,0 +1,27 @@
+<svg width="200" height="60" viewBox="0 0 200 60" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background -->
+  <rect width="200" height="60" fill="transparent"/>
+  
+  <!-- Globe/Domain Icon -->
+  <circle cx="25" cy="30" r="16" fill="#FF6C0C" opacity="0.1"/>
+  <circle cx="25" cy="30" r="14" stroke="#FF6C0C" stroke-width="2.5" fill="none"/>
+  
+  <!-- Latitude lines -->
+  <ellipse cx="25" cy="30" rx="14" ry="4" stroke="#FF6C0C" stroke-width="1.5" fill="none"/>
+  <ellipse cx="25" cy="30" rx="14" ry="8" stroke="#FF6C0C" stroke-width="1" fill="none" opacity="0.6"/>
+  
+  <!-- Longitude line -->
+  <ellipse cx="25" cy="30" rx="4" ry="14" stroke="#FF6C0C" stroke-width="1.5" fill="none"/>
+  
+  <!-- Center dot -->
+  <circle cx="25" cy="30" r="2" fill="#FF6C0C"/>
+  
+  <!-- Brand name "Namecheap" -->
+  <text x="50" y="38" font-family="'Inter', 'Helvetica', 'Arial', sans-serif" font-size="24" font-weight="800" fill="#FF6C0C" letter-spacing="-0.5">Namecheap</text>
+  
+  <!-- Tagline -->
+  <text x="51" y="48" font-family="'Inter', 'Helvetica', 'Arial', sans-serif" font-size="8" font-weight="500" fill="#9ca3af" letter-spacing="0.5">DOMAINS & HOSTING</text>
+  
+  <!-- Accent dot on 'i' -->
+  <circle cx="118" cy="25" r="1.5" fill="#0ea5e9"/>
+</svg>

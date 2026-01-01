@@ -11,6 +11,47 @@ export async function POST(request: NextRequest) {
       return NextResponse.json({ error: "Unauthorized" }, { status: 401 })
     }
 
+<<<<<<< HEAD
+=======
+    const contentType = request.headers.get("content-type") || ""
+
+    // JSON payload support (for automated tests and API clients)
+    if (contentType.includes("application/json")) {
+      const body = await request.json()
+      const products = Array.isArray(body?.products) ? body.products : []
+
+      if (products.length === 0) {
+        return NextResponse.json({ error: "No products provided" }, { status: 400 })
+      }
+
+      let uploadedCount = 0
+
+      for (const product of products) {
+        try {
+          await query(
+            "INSERT INTO products (name, description, price, category, stock_quantity) VALUES ($1, $2, $3, $4, $5)",
+            [
+              product.name,
+              product.description,
+              Number.parseFloat(product.price),
+              product.category,
+              Number.parseInt(product.stock_quantity ?? product.stock ?? 0),
+            ],
+          )
+          uploadedCount++
+        } catch (error) {
+          console.error("Error inserting product:", error)
+        }
+      }
+
+      return NextResponse.json({
+        message: `Successfully uploaded ${uploadedCount} products`,
+        count: uploadedCount,
+      })
+    }
+
+    // Default CSV upload path
+>>>>>>> c0d548507124f266e9960c5da55332c2d96d5474
     const formData = await request.formData()
     const file = formData.get("file") as File
 
@@ -43,7 +84,11 @@ export async function POST(request: NextRequest) {
             product.description,
             Number.parseFloat(product.price),
             product.category,
+<<<<<<< HEAD
             Number.parseInt(product.stock),
+=======
+            Number.parseInt(product.stock_quantity ?? product.stock ?? 0),
+>>>>>>> c0d548507124f266e9960c5da55332c2d96d5474
           ],
         )
         uploadedCount++

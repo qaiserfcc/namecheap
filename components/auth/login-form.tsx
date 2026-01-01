@@ -48,40 +48,47 @@ export function LoginForm() {
     }
   }
 
+  function fillAdminCredentials() {
+    setEmail("admin@cheapname.tyo")
+    setPassword("password123")
+  }
+
   return (
-    <Card className="w-full max-w-md mx-auto p-6 bg-card border-neon-blue border-2 neon-border-blue">
-      <div className="text-center mb-6">
-        <h1 className="text-2xl font-bold text-primary neon-glow-blue mb-2">Namecheap Organics</h1>
-        <p className="text-sm text-muted-foreground">Premium Organic Products</p>
+    <Card className="w-full max-w-md mx-auto p-8 bg-gradient-to-br from-yellow-950/40 via-yellow-900/30 to-yellow-950/40 backdrop-blur-xl border-2 border-yellow-500/40 shadow-2xl shadow-yellow-500/20">
+      <div className="text-center mb-8">
+        <h1 className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-yellow-200 bg-clip-text text-transparent mb-2">
+          Namecheap Organics
+        </h1>
+        <p className="text-sm text-yellow-100/70">Premium Organic Products</p>
       </div>
 
       {error && (
-        <div className="mb-4 p-3 bg-destructive/20 border border-destructive rounded-lg text-destructive text-sm">
+        <div className="mb-4 p-3 bg-red-500/20 backdrop-blur-sm border border-red-400/40 rounded-lg text-red-300 text-sm">
           {error}
         </div>
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
-          <label className="block text-sm font-medium mb-2 text-foreground">Email</label>
+          <label className="block text-sm font-medium mb-2 text-yellow-100">Email</label>
           <Input
             type="email"
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="your@email.com"
-            className="bg-input border-border text-foreground"
+            className="bg-yellow-950/30 border-yellow-500/40 text-yellow-50 placeholder:text-yellow-300/40 focus:border-yellow-400 focus:ring-yellow-400/50"
             required
           />
         </div>
 
         <div>
-          <label className="block text-sm font-medium mb-2 text-foreground">Password</label>
+          <label className="block text-sm font-medium mb-2 text-yellow-100">Password</label>
           <Input
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
             placeholder="••••••••"
-            className="bg-input border-border text-foreground"
+            className="bg-yellow-950/30 border-yellow-500/40 text-yellow-50 placeholder:text-yellow-300/40 focus:border-yellow-400 focus:ring-yellow-400/50"
             required
           />
         </div>
@@ -89,25 +96,30 @@ export function LoginForm() {
         <Button
           type="submit"
           disabled={loading}
-          className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 neon-glow-blue"
+          className="w-full bg-gradient-to-r from-yellow-600 to-yellow-500 hover:from-yellow-500 hover:to-yellow-400 text-yellow-950 font-semibold py-3 shadow-lg shadow-yellow-500/30 border border-yellow-400/50"
         >
           {loading ? "Logging in..." : "Login"}
         </Button>
       </form>
 
-      <div className="mt-6 text-center text-sm text-muted-foreground">
+      <div className="mt-6 text-center text-sm text-yellow-100/70">
         Don't have an account?{" "}
-        <Link href="/auth/register" className="text-primary hover:underline font-semibold">
+        <Link href="/auth/register" className="text-yellow-400 hover:text-yellow-300 font-semibold underline">
           Register here
         </Link>
       </div>
 
-      <div className="mt-6 p-4 bg-card border border-neon-blue/50 rounded-lg">
-        <p className="text-xs text-muted-foreground mb-2 font-semibold">ADMIN LOGIN:</p>
-        <p className="text-xs text-muted-foreground mb-1">Email: admin@namecheap.com</p>
-        <p className="text-xs text-muted-foreground">Password: admin123</p>
-        <p className="text-xs text-yellow-400 mt-2 italic">
-          Use these credentials to access the admin dashboard with full management features.
+      <div className="mt-6 p-4 bg-yellow-900/20 backdrop-blur-sm border border-yellow-500/30 rounded-lg">
+        <p className="text-xs text-yellow-200/90 mb-3 font-semibold">ADMIN QUICK LOGIN</p>
+        <Button
+          type="button"
+          onClick={fillAdminCredentials}
+          className="w-full bg-yellow-500/20 hover:bg-yellow-500/30 text-yellow-200 border border-yellow-500/40 font-medium text-sm py-2"
+        >
+          Auto-Fill Admin Credentials
+        </Button>
+        <p className="text-xs text-yellow-300/60 mt-2 italic">
+          Click to auto-fill: admin@cheapname.tyo / password123
         </p>
       </div>
     </Card>

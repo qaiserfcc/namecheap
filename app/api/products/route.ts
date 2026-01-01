@@ -5,9 +5,10 @@ import { getSessionCookie, verifySession } from "@/lib/sessions"
 export async function GET() {
   try {
     const result = await query("SELECT * FROM products ORDER BY created_at DESC")
-    return NextResponse.json(result)
+    return NextResponse.json(Array.isArray(result) ? result : [])
   } catch (error) {
-    return NextResponse.json({ error: "Failed to fetch products" }, { status: 500 })
+    console.error("Failed to fetch products:", error)
+    return NextResponse.json([], { status: 200 }) // Return empty array instead of error for better UX
   }
 }
 
@@ -27,7 +28,7 @@ export async function POST(request: NextRequest) {
       [name, description, price, category, imageUrl, stock],
     )
 
-    return NextResponse.json(result[0])
+    return NextResponse.json(result?.[0] || result)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to create product" }, { status: 500 })
   }

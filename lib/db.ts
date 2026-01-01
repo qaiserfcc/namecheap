@@ -4,8 +4,9 @@ const sql = neon(process.env.DATABASE_URL || "")
 
 export async function query<T = any>(text: string, params: any[] = []): Promise<T[]> {
   try {
-    const result = await sql.query<T>(text, params)
-    return result.rows as T[]
+    // Use sql.query for positional parameters; returns rows array directly
+    const rows = await sql.query(text, params)
+    return rows as T[]
   } catch (error) {
     console.error("Database error:", error)
     throw error
@@ -18,7 +19,7 @@ export async function createUser(email: string, passwordHash: string, fullName: 
     "INSERT INTO users (email, password_hash, full_name, role) VALUES ($1, $2, $3, $4) RETURNING id, email, full_name, role",
     [email, passwordHash, fullName, role],
   )
-  return result[0]
+  return result
 }
 
 export async function getUserByEmail(email: string) {
