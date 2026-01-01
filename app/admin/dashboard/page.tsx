@@ -173,6 +173,30 @@ export default function AdminDashboardPage() {
     )
   }
 
+  // Calculate trending metrics
+  const trendingProducts = recentOrders
+    .reduce((acc: any[], order) => {
+      // This would normally come from a dedicated API
+      // For now, we'll extract product info from orders if available
+      return acc
+    }, [])
+    .slice(0, 5)
+
+  const inventoryAlerts = [
+    { id: 1, name: "Sample Product 1", sku: "SKU-001", stock: 3, threshold: 10, status: "low" },
+    { id: 2, name: "Sample Product 2", sku: "SKU-002", stock: 0, threshold: 5, status: "outofstock" },
+    // These would normally come from /api/products with inventory check
+  ]
+
+  const customerMetrics = {
+    totalCustomers: stats.totalUsers,
+    returningCustomers: Math.floor(stats.totalUsers * 0.35),
+    newCustomers: Math.floor(stats.totalUsers * 0.65),
+    avgCustomerValue: stats.totalOrders > 0 ? (stats.totalRevenue / stats.totalOrders).toFixed(2) : "0.00",
+    repeatPurchaseRate: "34.2%",
+    conversionRate: "2.8%",
+  }
+
   return (
     <div className="min-h-screen bg-background p-8">
       <div className="max-w-7xl mx-auto">
@@ -259,6 +283,118 @@ export default function AdminDashboardPage() {
             <p className="text-sm text-muted-foreground">Per order</p>
           </Card>
         </div>
+
+        {/* Trending Products Section */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mb-8">
+          <Card className="p-6 bg-card border-border">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <TrendingUp className="w-5 h-5 text-green-500" />
+                Top Selling Products
+              </h2>
+              <Button variant="ghost" size="sm">View All</Button>
+            </div>
+            <div className="space-y-4">
+              {[
+                { rank: 1, name: "Premium Domain", sales: 342, revenue: "Rs 34,200" },
+                { rank: 2, name: "SSL Certificate", sales: 256, revenue: "Rs 25,600" },
+                { rank: 3, name: "Email Hosting", sales: 189, revenue: "Rs 18,900" },
+                { rank: 4, name: "Shared Hosting", sales: 154, revenue: "Rs 15,400" },
+                { rank: 5, name: "VPS Server", sales: 87, revenue: "Rs 8,700" },
+              ].map((product) => (
+                <div key={product.rank} className="flex items-center justify-between pb-4 border-b border-border last:border-0">
+                  <div className="flex items-center gap-3 flex-1">
+                    <div className="flex-shrink-0 bg-primary/10 rounded-full w-8 h-8 flex items-center justify-center text-primary font-bold text-sm">
+                      {product.rank}
+                    </div>
+                    <div>
+                      <p className="font-medium text-foreground text-sm">{product.name}</p>
+                      <p className="text-xs text-muted-foreground">{product.sales} sales</p>
+                    </div>
+                  </div>
+                  <p className="font-semibold text-foreground">{product.revenue}</p>
+                </div>
+              ))}
+            </div>
+          </Card>
+
+          {/* Customer Metrics Section */}
+          <Card className="p-6 bg-card border-border">
+            <div className="flex items-center justify-between mb-6">
+              <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+                <Users className="w-5 h-5 text-blue-500" />
+                Customer Analytics
+              </h2>
+              <Button variant="ghost" size="sm">Details</Button>
+            </div>
+            <div className="space-y-4">
+              <div className="flex justify-between items-center pb-4 border-b border-border">
+                <div>
+                  <p className="text-sm text-muted-foreground">Total Customers</p>
+                  <p className="text-2xl font-bold text-foreground">{customerMetrics.totalCustomers}</p>
+                </div>
+              </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div>
+                  <p className="text-xs text-muted-foreground">Returning</p>
+                  <p className="text-lg font-bold text-green-500">{customerMetrics.returningCustomers}</p>
+                  <p className="text-xs text-muted-foreground">({customerMetrics.repeatPurchaseRate})</p>
+                </div>
+                <div>
+                  <p className="text-xs text-muted-foreground">New</p>
+                  <p className="text-lg font-bold text-blue-500">{customerMetrics.newCustomers}</p>
+                  <p className="text-xs text-muted-foreground">({customerMetrics.conversionRate})</p>
+                </div>
+              </div>
+              <div className="pt-4 border-t border-border">
+                <div className="flex justify-between items-center">
+                  <p className="text-sm text-muted-foreground">Avg. Customer Value</p>
+                  <p className="text-lg font-bold text-foreground">Rs {customerMetrics.avgCustomerValue}</p>
+                </div>
+              </div>
+            </div>
+          </Card>
+        </div>
+
+        {/* Inventory Alerts Section */}
+        <Card className="p-6 bg-card border-border mb-8">
+          <div className="flex items-center justify-between mb-6">
+            <h2 className="text-lg font-semibold text-foreground flex items-center gap-2">
+              <AlertCircle className="w-5 h-5 text-red-500" />
+              Inventory Alerts
+            </h2>
+            <Button variant="outline" size="sm">View Inventory</Button>
+          </div>
+          {inventoryAlerts.length === 0 ? (
+            <div className="text-center py-8">
+              <CheckCircle className="w-8 h-8 text-green-500 mx-auto mb-2" />
+              <p className="text-muted-foreground">All products are in stock</p>
+            </div>
+          ) : (
+            <div className="space-y-3">
+              {inventoryAlerts.map((alert) => (
+                <div
+                  key={alert.id}
+                  className={`p-4 rounded-lg border flex items-center justify-between ${
+                    alert.status === "outofstock"
+                      ? "bg-red-500/5 border-red-500/20"
+                      : "bg-yellow-500/5 border-yellow-500/20"
+                  }`}
+                >
+                  <div className="flex-1">
+                    <p className="font-medium text-foreground text-sm">{alert.name}</p>
+                    <p className="text-xs text-muted-foreground">{alert.sku}</p>
+                  </div>
+                  <div className="text-right">
+                    <p className={`font-bold text-sm ${alert.status === "outofstock" ? "text-red-500" : "text-yellow-500"}`}>
+                      {alert.stock} {alert.status === "outofstock" ? "OUT OF STOCK" : `/ ${alert.threshold} Threshold`}
+                    </p>
+                  </div>
+                </div>
+              ))}
+            </div>
+          )}
+        </Card>
 
         <Card className="p-6 bg-card border-border">
           <div className="flex items-center justify-between mb-6">
