@@ -32,28 +32,6 @@ export function validateEnvironment() {
 }
 
 /**
- * Validate session secret is properly configured
- */
-export function validateSessionSecret() {
-  const secret = process.env.SESSION_SECRET
-
-  if (!secret && process.env.NODE_ENV === "production") {
-    throw new Error("SESSION_SECRET must be set in production")
-  }
-
-  if (secret === "your-secret-key-change-in-production") {
-    if (process.env.NODE_ENV === "production") {
-      throw new Error("SESSION_SECRET cannot use default value in production")
-    }
-    console.warn("⚠️  WARNING: Using default SESSION_SECRET. Set a secure value in .env")
-  }
-
-  if (secret && secret.length < 32) {
-    console.warn("⚠️  WARNING: SESSION_SECRET should be at least 32 characters long")
-  }
-}
-
-/**
  * Security headers for API responses
  */
 export const SECURITY_HEADERS = {

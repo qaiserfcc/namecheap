@@ -15,6 +15,9 @@ interface RateLimitStore {
 // In-memory store (use Redis in production)
 const store: RateLimitStore = {}
 
+// Cleanup interval configuration
+const CLEANUP_INTERVAL_MS = 5 * 60 * 1000 // 5 minutes
+
 export interface RateLimitOptions {
   /** Maximum number of requests allowed in the window */
   maxRequests: number
@@ -91,7 +94,7 @@ function cleanupStore() {
 // In serverless, cleanup happens on-demand during checkRateLimit
 let cleanupInterval: NodeJS.Timeout | null = null
 if (typeof setInterval !== "undefined" && process.env.NODE_ENV !== "test") {
-  cleanupInterval = setInterval(cleanupStore, 5 * 60 * 1000)
+  cleanupInterval = setInterval(cleanupStore, CLEANUP_INTERVAL_MS)
 }
 
 // Export for testing purposes

@@ -84,10 +84,10 @@ SELECT
   CURRENT_TIMESTAMP as refreshed_at,
   1 as id; -- Add static ID for unique index
 
--- Create unique index on id column for CONCURRENTLY refresh
+-- Create unique index on id column for regular refresh (single row view)
 CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_analytics_id ON mv_analytics_summary(id);
 
--- Create function to refresh analytics (using regular refresh since we have a single row)
+-- Create function to refresh analytics (regular refresh for single-row view)
 CREATE OR REPLACE FUNCTION refresh_analytics_summary()
 RETURNS void AS $$
 BEGIN

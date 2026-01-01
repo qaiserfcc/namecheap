@@ -155,34 +155,47 @@ export const updatePromotionSchema = z.object({
 
 // ==================== Bulk Upload Validation ====================
 
+/**
+ * Helper to validate and parse number from string
+ */
+function parseNumberSafe(value: string, fieldName: string, allowNegative = false): number | typeof z.NEVER {
+  const num = parseFloat(value)
+  if (isNaN(num) || (!allowNegative && num < 0) || (allowNegative && num <= 0)) {
+    const message = allowNegative 
+      ? `${fieldName} must be a valid positive number`
+      : `${fieldName} must be a valid non-negative number`
+    throw new z.ZodError([{
+      code: z.ZodIssueCode.custom,
+      message,
+      path: [fieldName]
+    }])
+  }
+  return num
+}
+
+/**
+ * Helper to validate and parse integer from string or number
+ */
+function parseIntSafe(value: string | number, fieldName: string): number | typeof z.NEVER {
+  const num = typeof value === "string" ? parseInt(value, 10) : value
+  if (isNaN(num) || num < 0) {
+    throw new z.ZodError([{
+      code: z.ZodIssueCode.custom,
+      message: `${fieldName} must be a valid non-negative integer`,
+      path: [fieldName]
+    }])
+  }
+  return num
+}
+
 export const bulkUploadProductSchema = z.object({
   name: z.string().min(1).max(255).trim(),
   description: z.string().max(5000).trim().optional(),
-  price: z.string().transform((val, ctx) => {
-    const num = parseFloat(val)
-    if (isNaN(num) || num <= 0) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: "Price must be a valid positive number",
-      })
-      return z.NEVER
-    }
-    return num
-  }),
+  price: z.string().transform((val) => parseNumberSafe(val, "price", true)),
   category: z.string().min(1).max(100).trim(),
   stock_quantity: z
     .union([z.string(), z.number()])
-    .transform((val, ctx) => {
-      const num = typeof val === "string" ? parseInt(val, 10) : val
-      if (isNaN(num) || num < 0) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: "Stock quantity must be a valid non-negative number",
-        })
-        return z.NEVER
-      }
-      return num
-    }),
+    .transform((val) => parseIntSafe(val, "stock_quantity")),
 })
 
 // ==================== Pagination Validation ====================

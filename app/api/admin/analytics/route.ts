@@ -22,7 +22,16 @@ export async function GET(request: NextRequest) {
     }
 
     // Use materialized view for fast summary metrics
-    const summaryResult = await query(`SELECT * FROM mv_analytics_summary LIMIT 1`)
+    const summaryResult = await query(`
+      SELECT 
+        revenue_today, revenue_week, revenue_month, revenue_total,
+        orders_today, orders_week, orders_month, orders_total,
+        avg_order_value, total_users, new_users_month,
+        total_products, low_stock_products, active_promotions,
+        refreshed_at
+      FROM mv_analytics_summary 
+      LIMIT 1
+    `)
     const summary = summaryResult[0] || {}
 
     // Get additional data in parallel (limited queries)
