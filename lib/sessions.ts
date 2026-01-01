@@ -66,6 +66,16 @@ export async function getSessionCookie() {
   return cookieStore.get("session")?.value
 }
 
+export async function getSession(): Promise<SessionData | null> {
+  const token = await getSessionCookie()
+  if (!token) return null
+  return verifySession(token)
+}
+
+export async function clearSession() {
+  await clearSessionCookie()
+}
+
 export async function clearSessionCookie() {
   const cookieStore = await cookies()
   cookieStore.delete("session")
