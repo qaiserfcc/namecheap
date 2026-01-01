@@ -1,6 +1,37 @@
 import { neon } from "@neondatabase/serverless"
 
-const sql = neon(process.env.DATABASE_URL || "")
+/**
+ * Environment-aware database configuration
+ * - Production (main branch): Uses neondb database
+ * - Development (dev branch): Uses neondb_dev database
+ * - Local: Uses .env.local configuration
+ */
+function getDatabaseUrl(): string {
+  const env = process.env.NODE_ENV || "development"
+  
+  // Explicit DATABASE_URL takes precedence
+  if (process.env.DATABASE_URL) {
+    console.log(`[DB Config] Using DATABASE_URL from environment (${env})`)
+    return process.env.DATABASE_URL
+  }
+
+  // Fallback to environment-specific defaults
+  if (env === "production") {
+    console.log("[DB Config] Production environment detected - using neondb")
+  } else {
+    console.log("[DB Config] Development environment detected - using neondb_dev")
+  }
+
+  return process.env.DATABASE_URL || ""
+}
+
+const databaseUrl = getDatabaseUrl()
+
+if (!databaseUrl) {
+  throw new Error("DATABASE_URL environment variable is not set. Please check your .env files.")
+}
+
+const sql = neon(databaseUrl)
 
 export async function query<T = any>(text: string, params: any[] = []): Promise<T[]> {
   try {
