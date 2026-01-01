@@ -20,10 +20,10 @@ export async function DELETE(request: NextRequest) {
     await query("DELETE FROM addresses WHERE user_id = $1", [userId])
     
     // Delete wishlist items
-    await query("DELETE FROM wishlist WHERE user_id = $1", [userId])
+    await query("DELETE FROM wishlists WHERE user_id = $1", [userId])
     
-    // Delete reviews
-    await query("DELETE FROM reviews WHERE user_id = $1", [userId])
+    // Delete product reviews
+    await query("DELETE FROM product_reviews WHERE user_id = $1", [userId])
     
     // Delete order items first, then orders
     await query(
