@@ -81,16 +81,17 @@ SELECT
   -- Promotion metrics
   (SELECT COUNT(*) FROM promotions WHERE active = true AND (ends_at IS NULL OR ends_at >= CURRENT_TIMESTAMP)) as active_promotions,
   
-  CURRENT_TIMESTAMP as refreshed_at;
+  CURRENT_TIMESTAMP as refreshed_at,
+  1 as id; -- Add static ID for unique index
 
--- Create index on materialized view
-CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_analytics_refreshed ON mv_analytics_summary(refreshed_at);
+-- Create unique index on id column for CONCURRENTLY refresh
+CREATE UNIQUE INDEX IF NOT EXISTS idx_mv_analytics_id ON mv_analytics_summary(id);
 
--- Create function to refresh analytics
+-- Create function to refresh analytics (using regular refresh since we have a single row)
 CREATE OR REPLACE FUNCTION refresh_analytics_summary()
 RETURNS void AS $$
 BEGIN
-  REFRESH MATERIALIZED VIEW CONCURRENTLY mv_analytics_summary;
+  REFRESH MATERIALIZED VIEW mv_analytics_summary;
 END;
 $$ LANGUAGE plpgsql;
 

@@ -87,9 +87,19 @@ function cleanupStore() {
   }
 }
 
-// Run cleanup every 5 minutes
-if (typeof setInterval !== "undefined") {
-  setInterval(cleanupStore, 5 * 60 * 1000)
+// Only set up cleanup interval in non-serverless environments
+// In serverless, cleanup happens on-demand during checkRateLimit
+let cleanupInterval: NodeJS.Timeout | null = null
+if (typeof setInterval !== "undefined" && process.env.NODE_ENV !== "test") {
+  cleanupInterval = setInterval(cleanupStore, 5 * 60 * 1000)
+}
+
+// Export for testing purposes
+export function stopCleanup() {
+  if (cleanupInterval) {
+    clearInterval(cleanupInterval)
+    cleanupInterval = null
+  }
 }
 
 /**

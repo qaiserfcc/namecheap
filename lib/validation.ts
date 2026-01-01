@@ -158,11 +158,31 @@ export const updatePromotionSchema = z.object({
 export const bulkUploadProductSchema = z.object({
   name: z.string().min(1).max(255).trim(),
   description: z.string().max(5000).trim().optional(),
-  price: z.string().transform((val) => parseFloat(val)),
+  price: z.string().transform((val, ctx) => {
+    const num = parseFloat(val)
+    if (isNaN(num) || num <= 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: "Price must be a valid positive number",
+      })
+      return z.NEVER
+    }
+    return num
+  }),
   category: z.string().min(1).max(100).trim(),
   stock_quantity: z
     .union([z.string(), z.number()])
-    .transform((val) => (typeof val === "string" ? parseInt(val, 10) : val)),
+    .transform((val, ctx) => {
+      const num = typeof val === "string" ? parseInt(val, 10) : val
+      if (isNaN(num) || num < 0) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: "Stock quantity must be a valid non-negative number",
+        })
+        return z.NEVER
+      }
+      return num
+    }),
 })
 
 // ==================== Pagination Validation ====================

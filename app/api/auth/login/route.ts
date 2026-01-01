@@ -7,6 +7,8 @@ import { ErrorResponses, secureJsonResponse, sanitizeError } from "@/lib/securit
 import { logAuditEvent } from "@/lib/audit"
 
 export async function POST(request: NextRequest) {
+  let requestBody: any = {}
+  
   try {
     // Apply strict rate limiting for login attempts
     const limitResult = await applyRateLimit(request, RATE_LIMITS.AUTH)
@@ -14,9 +16,11 @@ export async function POST(request: NextRequest) {
       return limitResult.response
     }
 
-    // Parse and validate request body
-    const body = await request.json()
-    const validation = loginSchema.safeParse(body)
+    // Parse request body once
+    requestBody = await request.json()
+    
+    // Validate request body
+    const validation = loginSchema.safeParse(requestBody)
 
     if (!validation.success) {
       return ErrorResponses.validationError(validation.error.format())
@@ -64,11 +68,10 @@ export async function POST(request: NextRequest) {
     console.error("Login error:", sanitizeError(error))
     
     // Log failed login attempt (without user ID since auth failed)
-    const body = await request.json().catch(() => ({}))
-    if (body.email) {
+    if (requestBody.email) {
       await logAuditEvent({
         userId: 0, // Use 0 for failed attempts
-        userEmail: body.email || "unknown",
+        userEmail: requestBody.email || "unknown",
         action: "LOGIN",
         entity: "AUTH",
         metadata: { success: false, error: error.message },
