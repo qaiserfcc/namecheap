@@ -3,7 +3,7 @@
 import { useEffect, useState } from "react"
 import Link from "next/link"
 import Image from "next/image"
-import { ShoppingCart, Menu, X } from "lucide-react"
+import { ShoppingCart, Menu, X, Heart } from "lucide-react"
 
 export default function Header() {
   const [cartCount, setCartCount] = useState(0)
@@ -53,8 +53,17 @@ export default function Header() {
         {/* Cart Icon */}
         <div className="flex items-center gap-4">
           <Link
+            href="/wishlist"
+            className="relative text-foreground hover:text-red-500 transition-colors hidden md:block"
+            title="Wishlist"
+          >
+            <Heart size={24} />
+          </Link>
+          
+          <Link
             href="/cart"
             className="relative text-foreground hover:text-primary transition-colors"
+            title="Shopping Cart"
           >
             <ShoppingCart size={24} />
             {cartCount > 0 && (
@@ -90,6 +99,14 @@ export default function Header() {
             onClick={() => setMobileMenuOpen(false)}
           >
             Products
+          </Link>
+          <Link
+            href="/wishlist"
+            className="block text-foreground hover:text-secondary transition-colors py-2 font-medium flex items-center gap-2"
+            onClick={() => setMobileMenuOpen(false)}
+          >
+            <Heart size={18} />
+            Wishlist
           </Link>
           <Link
             href="/admin"

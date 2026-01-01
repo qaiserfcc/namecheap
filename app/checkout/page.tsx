@@ -303,64 +303,6 @@ export default function CheckoutPage() {
           </Card>
         </div>
       </div>
-      <div className="max-w-2xl mx-auto">
-        <Card className="p-8 bg-card border-border neon-border-blue">
-          <h1 className="text-3xl font-bold text-foreground mb-6">Checkout</h1>
-
-          {error && (
-            <div className="mb-4 p-3 bg-destructive/20 border border-destructive rounded-lg text-destructive text-sm">
-              {error}
-            </div>
-          )}
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">Shipping Address</label>
-              <textarea
-                value={formData.address}
-                onChange={(e) => setFormData({ ...formData, address: e.target.value })}
-                placeholder="Enter your full address"
-                className="w-full px-4 py-2 border border-border rounded-lg bg-input text-foreground"
-                rows={4}
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">Town/City</label>
-              <Input
-                type="text"
-                value={formData.town}
-                onChange={(e) => setFormData({ ...formData, town: e.target.value })}
-                placeholder="Your town or city"
-                className="bg-input border-border text-foreground"
-                required
-              />
-            </div>
-
-            <div>
-              <label className="block text-sm font-medium mb-2 text-foreground">Phone Number</label>
-              <Input
-                type="tel"
-                value={formData.phone}
-                onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
-                placeholder="Your phone number"
-                className="bg-input border-border text-foreground"
-                required
-              />
-            </div>
-
-            <Button
-              type="submit"
-              disabled={loading}
-              className="w-full bg-primary hover:bg-primary/90 text-primary-foreground font-semibold py-2 neon-glow-blue"
-            >
-              {loading ? "Processing..." : "Complete Order"}
-            </Button>
-          </form>
-        </Card>
-      </div>
-      </div>
     </>
   )
 }
