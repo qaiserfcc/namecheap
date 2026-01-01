@@ -32,9 +32,13 @@ interface Product {
   category: string
   price: number
   stock: number
+  stock_quantity?: number
+  image_url?: string
   created_at: string
-  product_images: ProductImage[]
-  product_variants: Variant[]
+  product_images?: ProductImage[]
+  images?: ProductImage[]
+  product_variants?: Variant[]
+  variants?: Variant[]
 }
 
 export default function ProductDetailPage() {
@@ -57,9 +61,15 @@ export default function ProductDetailPage() {
       const response = await fetch(`/api/products/${slug}`)
       if (response.ok) {
         const data = await response.json()
-        setProduct(data)
-        if (data.product_variants && data.product_variants.length > 0) {
-          setSelectedVariant(data.product_variants[0])
+        // Normalize API response format
+        const normalizedData = {
+          ...data,
+          product_images: data.product_images || data.images || [],
+          product_variants: data.product_variants || data.variants || []
+        }
+        setProduct(normalizedData)
+        if (normalizedData.product_variants && normalizedData.product_variants.length > 0) {
+          setSelectedVariant(normalizedData.product_variants[0])
         }
       } else {
         setError("Product not found")
@@ -94,7 +104,7 @@ export default function ProductDetailPage() {
       variant_id: selectedVariant?.id,
       variant_sku: selectedVariant?.sku,
       quantity,
-      image_url: product?.product_images[0]?.image_url,
+      image_url: product?.product_images?.[0]?.image_url || product?.image_url,
     }
 
     const cart = JSON.parse(localStorage.getItem("cart") || "[]")

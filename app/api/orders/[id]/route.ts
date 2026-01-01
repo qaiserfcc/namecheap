@@ -105,7 +105,7 @@ export async function PATCH(request: NextRequest, { params }: { params: Promise<
       )
     }
 
-    return NextResponse.json(result[0])
+    return NextResponse.json(result?.[0] || null)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to update order" }, { status: 500 })
   }

@@ -17,11 +17,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const userId = parseInt(resolvedParams.id)
     const result = await query(`SELECT id, full_name as name, email, role, created_at FROM users WHERE id = $1`, [userId])
     
-    if (result.length === 0) {
+    if (!result || result.length === 0) {
       return NextResponse.json({ error: "User not found" }, { status: 404 })
     }
     
-    return NextResponse.json(result[0])
+    return NextResponse.json(result?.[0] || null)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to fetch user" }, { status: 500 })
   }

@@ -9,11 +9,11 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     const promoId = parseInt(resolvedParams.id)
     const result = await query(`SELECT * FROM promotions WHERE id = $1`, [promoId])
     
-    if (result.length === 0) {
+    if (!result || result.length === 0) {
       return NextResponse.json({ error: "Promotion not found" }, { status: 404 })
     }
     
-    return NextResponse.json(result[0])
+    return NextResponse.json(result?.[0] || null)
   } catch (error: any) {
     return NextResponse.json({ error: error.message || "Failed to fetch promotion" }, { status: 500 })
   }

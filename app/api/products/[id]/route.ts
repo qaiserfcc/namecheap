@@ -10,7 +10,7 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
     
     const productResult = await query(`SELECT * FROM products WHERE id = $1`, [productId])
     
-    if (productResult.length === 0) {
+    if (!productResult || productResult.length === 0) {
       return NextResponse.json({ error: "Product not found" }, { status: 404 })
     }
 
@@ -30,10 +30,14 @@ export async function GET(request: NextRequest, { params }: { params: Promise<{ 
 
     return NextResponse.json({
       ...product,
-      images,
-      variants
+      product_images: Array.isArray(images) ? images : [],
+      product_variants: Array.isArray(variants) ? variants : [],
+      // Keep legacy fields for compatibility
+      images: Array.isArray(images) ? images : [],
+      variants: Array.isArray(variants) ? variants : []
     })
   } catch (error: any) {
+    console.error("Failed to fetch product:", error)
     return NextResponse.json({ error: error.message || "Failed to fetch product" }, { status: 500 })
   }
 }

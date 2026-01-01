@@ -16,7 +16,9 @@ interface Product {
   category: string
   price: number
   stock: number
-  product_images: Array<{ image_url: string; alt_text: string }>
+  stock_quantity?: number
+  image_url?: string
+  product_images?: Array<{ image_url: string; alt_text: string }>
 }
 
 export default function ProductsPage() {
@@ -40,9 +42,9 @@ export default function ProductsPage() {
 
         // Extract unique categories
         const cats = Array.from(
-          new Set((Array.isArray(data) ? data : []).map((p: any) => p.category))
+          new Set((Array.isArray(data) ? data : []).map((p: any) => p.category).filter(Boolean))
         ) as string[]
-        setCategories(cats.sort())
+        setCategories(cats.filter(Boolean).sort())
       }
     } catch (error) {
       console.error("Failed to fetch products:", error)
@@ -150,7 +152,7 @@ export default function ProductsPage() {
             ) : filteredProducts.length > 0 ? (
               <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                 {filteredProducts.map((product) => {
-                  const primaryImage = product.product_images[0]?.image_url
+                  const primaryImage = product.product_images?.[0]?.image_url || product.image_url
 
                   return (
                     <Card
@@ -165,14 +167,14 @@ export default function ProductsPage() {
                             fill
                             className="object-cover group-hover:scale-110 transition"
                           />
-                          {product.stock === 0 && (
+                          {(product.stock === 0 || product.stock_quantity === 0) && (
                             <div className="absolute inset-0 bg-black/50 flex items-center justify-center">
                               <p className="text-white font-bold">Out of Stock</p>
                             </div>
                           )}
-                          {product.stock < 10 && product.stock > 0 && (
+                          {((product.stock || product.stock_quantity || 0) < 10 && (product.stock || product.stock_quantity || 0) > 0) && (
                             <div className="absolute top-2 right-2 bg-yellow-500/80 text-black px-2 py-1 rounded text-xs font-semibold">
-                              Only {product.stock} left
+                              Only {product.stock || product.stock_quantity} left
                             </div>
                           )}
                         </div>
