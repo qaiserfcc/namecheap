@@ -238,9 +238,35 @@ export default function ProductDetailPage() {
                       <div>
                         <p className="font-semibold text-foreground">{variant.sku}</p>
                         <p className="text-sm text-muted-foreground">
-                          {Object.entries(variant.attributes)
-                            .map(([key, value]) => `${key}: ${value}`)
-                            .join(", ")}
+                          {variant && variant.attributes
+                            ? Object.entries(variant.attributes)
+                                .filter(([, val]) => val !== null && val !== undefined)
+                                .map(([key, val]: [string, any]) => {
+                                  let displayValue = ''
+                                  if (typeof val === 'string') {
+                                    displayValue = val
+                                  } else if (typeof val === 'number') {
+                                    displayValue = String(val)
+                                  } else if (typeof val === 'boolean') {
+                                    displayValue = String(val)
+                                  } else if (val && typeof val === 'object' && !Array.isArray(val)) {
+                                    if ('value' in val) {
+                                      displayValue = String((val as any).value)
+                                    } else if ('label' in val) {
+                                      displayValue = String((val as any).label)
+                                    } else {
+                                      try {
+                                        displayValue = JSON.stringify(val)
+                                      } catch {
+                                        displayValue = 'N/A'
+                                      }
+                                    }
+                                  }
+                                  return displayValue ? `${key}: ${displayValue}` : null
+                                })
+                                .filter(Boolean)
+                                .join(", ")
+                            : "No attributes"}
                         </p>
                       </div>
                       {variant.price_override && (
