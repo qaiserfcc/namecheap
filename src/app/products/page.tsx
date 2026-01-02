@@ -38,36 +38,36 @@ export default async function ProductsPage() {
   const products: Product[] = await getProducts();
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-dark-black shadow-lg">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-green-600">
-              Chiltan Pure
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/logo.svg" alt="NameCheap" className="h-12" />
             </Link>
-            <div className="flex gap-4">
+            <div className="flex gap-6">
               <Link 
                 href="/products" 
-                className="text-green-600 font-semibold"
+                className="text-dark-yellow font-semibold"
               >
                 Products
               </Link>
               <Link 
                 href="/cart" 
-                className="text-gray-700 hover:text-green-600 transition-colors"
+                className="text-white hover:text-dark-yellow transition-colors font-medium"
               >
                 Cart
               </Link>
               <Link 
                 href="/account" 
-                className="text-gray-700 hover:text-green-600 transition-colors"
+                className="text-white hover:text-dark-yellow transition-colors font-medium"
               >
                 Account
               </Link>
               <Link 
                 href="/admin" 
-                className="text-gray-700 hover:text-green-600 transition-colors"
+                className="text-white hover:text-dark-yellow transition-colors font-medium"
               >
                 Admin
               </Link>
@@ -78,10 +78,12 @@ export default async function ProductsPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Our Products</h1>
+        <h1 className="text-5xl font-bold text-dark-black mb-8">
+          Our <span className="text-dark-yellow">Products</span>
+        </h1>
 
         {products.length === 0 ? (
-          <div className="text-center py-12 bg-white rounded-lg shadow-sm">
+          <div className="text-center py-16 card">
             <p className="text-gray-500 text-lg">No products available at the moment.</p>
           </div>
         ) : (
@@ -90,44 +92,44 @@ export default async function ProductsPage() {
               <Link
                 key={product.id}
                 href={`/products/${product.slug}`}
-                className="bg-white rounded-lg shadow-sm hover:shadow-md transition-shadow overflow-hidden group"
+                className="card overflow-hidden group border-2 border-transparent hover:border-dark-yellow transition-all"
               >
                 {/* Product Image */}
-                <div className="aspect-square bg-gray-100 flex items-center justify-center">
+                <div className="aspect-square bg-gray-100 flex items-center justify-center relative overflow-hidden">
                   {product.imageUrl ? (
                     <img 
                       src={product.imageUrl} 
                       alt={product.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform"
+                      className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-300"
                     />
                   ) : (
                     <div className="text-6xl">📦</div>
                   )}
+                  {product.priceComparison.savings > 0 && (
+                    <div className="absolute top-3 right-3 bg-dark-yellow text-dark-black font-bold px-3 py-1 rounded-full text-sm shadow-lg">
+                      -{product.priceComparison.savingsPercentage.toFixed(0)}%
+                    </div>
+                  )}
                 </div>
 
                 {/* Product Info */}
-                <div className="p-4">
-                  <h3 className="font-semibold text-lg text-gray-900 mb-2 line-clamp-2">
+                <div className="p-5">
+                  <h3 className="font-bold text-lg text-dark-black mb-2 line-clamp-2 group-hover:text-dark-yellow transition-colors">
                     {product.name}
                   </h3>
 
                   {product.description && (
-                    <p className="text-sm text-gray-600 mb-3 line-clamp-2">
+                    <p className="text-sm text-gray-600 mb-4 line-clamp-2">
                       {product.description}
                     </p>
                   )}
 
                   {/* Price Comparison */}
-                  <div className="space-y-1">
+                  <div className="space-y-2">
                     <div className="flex items-center gap-2">
-                      <span className="text-2xl font-bold text-green-600">
+                      <span className="text-2xl font-bold text-dark-yellow">
                         {formatCurrency(product.discountedPrice)}
                       </span>
-                      {product.priceComparison.savings > 0 && (
-                        <span className="text-sm text-red-500 bg-red-50 px-2 py-1 rounded">
-                          -{product.priceComparison.savingsPercentage.toFixed(0)}%
-                        </span>
-                      )}
                     </div>
 
                     {product.priceComparison.savings > 0 && (
@@ -135,7 +137,7 @@ export default async function ProductsPage() {
                         <span className="text-gray-400 line-through">
                           {formatCurrency(product.officialPrice)}
                         </span>
-                        <span className="text-green-600 font-medium">
+                        <span className="text-sky-blue font-semibold">
                           Save {formatCurrency(product.priceComparison.savings)}
                         </span>
                       </div>
@@ -143,13 +145,13 @@ export default async function ProductsPage() {
                   </div>
 
                   {/* Stock Status */}
-                  <div className="mt-3">
+                  <div className="mt-4">
                     {product.stock > 0 ? (
-                      <span className="text-xs text-green-600 bg-green-50 px-2 py-1 rounded">
+                      <span className="text-xs text-white bg-sky-blue px-3 py-1.5 rounded-full font-medium">
                         In Stock ({product.stock} available)
                       </span>
                     ) : (
-                      <span className="text-xs text-red-600 bg-red-50 px-2 py-1 rounded">
+                      <span className="text-xs text-white bg-red-500 px-3 py-1.5 rounded-full font-medium">
                         Out of Stock
                       </span>
                     )}
