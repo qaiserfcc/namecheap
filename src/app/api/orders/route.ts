@@ -69,7 +69,12 @@ export async function POST(request: NextRequest) {
 
     // Validate products and calculate total
     let totalAmount = 0;
-    const orderItemsData = [];
+    const orderItemsData: Array<{
+      productId: string;
+      quantity: number;
+      unitPrice: any;
+      totalPrice: number;
+    }> = [];
 
     for (const item of items) {
       const product = await prisma.product.findUnique({

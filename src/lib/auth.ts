@@ -18,13 +18,17 @@ export interface AuthTokens {
 }
 
 export function generateTokens(payload: TokenPayload): AuthTokens {
-  const accessToken = jwt.sign(payload, JWT_SECRET, {
-    expiresIn: JWT_EXPIRES_IN,
-  });
+  const accessToken = jwt.sign(
+    payload as Record<string, any>,
+    JWT_SECRET,
+    { expiresIn: JWT_EXPIRES_IN }
+  );
 
-  const refreshToken = jwt.sign(payload, JWT_REFRESH_SECRET, {
-    expiresIn: JWT_REFRESH_EXPIRES_IN,
-  });
+  const refreshToken = jwt.sign(
+    payload as Record<string, any>,
+    JWT_REFRESH_SECRET,
+    { expiresIn: JWT_REFRESH_EXPIRES_IN }
+  );
 
   return { accessToken, refreshToken };
 }
