@@ -68,34 +68,35 @@ export default function AdminProductsPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-xl text-dark-black font-semibold">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-dark-black shadow-lg">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/admin/dashboard" className="text-2xl font-bold text-green-600">
-              Chiltan Pure Admin
+            <Link href="/admin/dashboard" className="flex items-center gap-3">
+              <img src="/logo.svg" alt="NameCheap" className="h-12" />
+              <span className="text-white font-semibold">Admin</span>
             </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/admin/dashboard" className="text-gray-700 hover:text-green-600">
+            <div className="flex items-center gap-6">
+              <Link href="/admin/dashboard" className="text-white hover:text-dark-yellow transition-colors font-medium">
                 Dashboard
               </Link>
-              <Link href="/admin/products" className="text-green-600 font-semibold">
+              <Link href="/admin/products" className="text-dark-yellow font-semibold">
                 Products
               </Link>
-              <Link href="/admin/orders" className="text-gray-700 hover:text-green-600">
+              <Link href="/admin/orders" className="text-white hover:text-dark-yellow transition-colors font-medium">
                 Orders
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-semibold"
               >
                 Logout
               </button>
@@ -107,39 +108,41 @@ export default function AdminProductsPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
         <div className="flex justify-between items-center mb-8">
-          <h1 className="text-4xl font-bold text-gray-900">Product Management</h1>
-          <button className="bg-green-600 text-white px-6 py-3 rounded-lg hover:bg-green-700 transition-colors font-semibold">
+          <h1 className="text-5xl font-bold text-dark-black">
+            Product <span className="text-dark-yellow">Management</span>
+          </h1>
+          <button className="btn-primary">
             + Add New Product
           </button>
         </div>
 
         {error && (
-          <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded mb-6">
+          <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded mb-6">
             {error}
           </div>
         )}
 
         {/* Products Table */}
-        <div className="bg-white rounded-lg shadow-sm overflow-hidden">
+        <div className="card overflow-hidden">
           <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-50">
+            <thead className="bg-gradient-to-r from-dark-yellow/20 to-sky-blue/20">
               <tr>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-dark-black uppercase tracking-wider">
                   Product
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-dark-black uppercase tracking-wider">
                   Official Price
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-dark-black uppercase tracking-wider">
                   Discounted Price
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-dark-black uppercase tracking-wider">
                   Stock
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-dark-black uppercase tracking-wider">
                   Status
                 </th>
-                <th className="px-6 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
+                <th className="px-6 py-4 text-left text-xs font-bold text-dark-black uppercase tracking-wider">
                   Actions
                 </th>
               </tr>
@@ -153,34 +156,34 @@ export default function AdminProductsPage() {
                 </tr>
               ) : (
                 products.map((product) => (
-                  <tr key={product.id} className="hover:bg-gray-50">
+                  <tr key={product.id} className="hover:bg-gray-50 transition-colors">
                     <td className="px-6 py-4">
-                      <div className="text-sm font-medium text-gray-900">{product.name}</div>
+                      <div className="text-sm font-semibold text-dark-black">{product.name}</div>
                       <div className="text-sm text-gray-500">{product.slug}</div>
                     </td>
                     <td className="px-6 py-4 text-sm text-gray-900">
                       PKR {product.officialPrice.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-sm text-green-600 font-semibold">
+                    <td className="px-6 py-4 text-sm text-dark-yellow font-bold">
                       PKR {product.discountedPrice.toLocaleString()}
                     </td>
-                    <td className="px-6 py-4 text-sm text-gray-900">
+                    <td className="px-6 py-4 text-sm text-dark-black font-semibold">
                       {product.stock}
                     </td>
                     <td className="px-6 py-4">
                       {product.isActive ? (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-green-100 text-green-800">
+                        <span className="px-3 py-1 text-xs font-bold rounded-full bg-sky-blue text-white">
                           Active
                         </span>
                       ) : (
-                        <span className="px-2 py-1 text-xs font-semibold rounded-full bg-gray-100 text-gray-800">
+                        <span className="px-3 py-1 text-xs font-bold rounded-full bg-gray-300 text-gray-700">
                           Inactive
                         </span>
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <button className="text-blue-600 hover:text-blue-800 mr-4">Edit</button>
-                      <button className="text-red-600 hover:text-red-800">Delete</button>
+                      <button className="text-sky-blue hover:text-secondary-dark font-semibold mr-4 transition-colors">Edit</button>
+                      <button className="text-red-600 hover:text-red-800 font-semibold transition-colors">Delete</button>
                     </td>
                   </tr>
                 ))
@@ -189,9 +192,9 @@ export default function AdminProductsPage() {
           </table>
         </div>
 
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mt-6 bg-gradient-to-r from-sky-blue/10 to-dark-yellow/10 border-2 border-sky-blue/30 rounded-lg p-4">
           <p className="text-sm text-gray-700">
-            <strong>Note:</strong> Product creation and editing forms will be available in the full implementation.
+            <strong className="text-dark-black">Note:</strong> Product creation and editing forms will be available in the full implementation.
             Currently showing products fetched from the database.
           </p>
         </div>

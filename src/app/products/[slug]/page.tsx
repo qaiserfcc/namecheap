@@ -56,30 +56,30 @@ export default async function ProductDetailPage({
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-dark-black shadow-lg">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/" className="text-2xl font-bold text-green-600">
-              Chiltan Pure
+            <Link href="/" className="flex items-center gap-3">
+              <img src="/logo.svg" alt="NameCheap" className="h-12" />
             </Link>
-            <div className="flex gap-4">
+            <div className="flex gap-6">
               <Link 
                 href="/products" 
-                className="text-gray-700 hover:text-green-600 transition-colors"
+                className="text-white hover:text-dark-yellow transition-colors font-medium"
               >
                 Products
               </Link>
               <Link 
                 href="/cart" 
-                className="text-gray-700 hover:text-green-600 transition-colors"
+                className="text-white hover:text-dark-yellow transition-colors font-medium"
               >
                 Cart
               </Link>
               <Link 
                 href="/admin" 
-                className="text-gray-700 hover:text-green-600 transition-colors"
+                className="text-white hover:text-dark-yellow transition-colors font-medium"
               >
                 Admin
               </Link>
@@ -93,15 +93,15 @@ export default async function ProductDetailPage({
         {/* Breadcrumb */}
         <div className="mb-8">
           <nav className="flex text-sm text-gray-500">
-            <Link href="/" className="hover:text-green-600">Home</Link>
+            <Link href="/" className="hover:text-dark-yellow transition-colors">Home</Link>
             <span className="mx-2">/</span>
-            <Link href="/products" className="hover:text-green-600">Products</Link>
+            <Link href="/products" className="hover:text-dark-yellow transition-colors">Products</Link>
             <span className="mx-2">/</span>
-            <span className="text-gray-900">{product.name}</span>
+            <span className="text-dark-black font-semibold">{product.name}</span>
           </nav>
         </div>
 
-        <div className="bg-white rounded-lg shadow-sm p-8">
+        <div className="card p-8 border-t-4 border-dark-yellow">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-12">
             {/* Product Image */}
             <div className="aspect-square bg-gray-100 rounded-lg flex items-center justify-center overflow-hidden">
@@ -119,21 +119,21 @@ export default async function ProductDetailPage({
             {/* Product Details */}
             <div>
               <div className="mb-2">
-                <span className="text-sm text-gray-500">by {product.brand.name}</span>
+                <span className="text-sm text-sky-blue font-semibold">by {product.brand.name}</span>
               </div>
               
-              <h1 className="text-4xl font-bold text-gray-900 mb-4">
+              <h1 className="text-4xl font-bold text-dark-black mb-4">
                 {product.name}
               </h1>
 
               {/* Price Comparison Box */}
-              <div className="bg-green-50 border-2 border-green-200 rounded-lg p-6 mb-6">
+              <div className="bg-gradient-to-r from-dark-yellow/10 to-sky-blue/10 border-2 border-dark-yellow rounded-lg p-6 mb-6">
                 <div className="flex items-baseline gap-3 mb-4">
-                  <span className="text-4xl font-bold text-green-600">
+                  <span className="text-4xl font-bold text-dark-yellow">
                     {formatCurrency(product.discountedPrice)}
                   </span>
                   {product.priceComparison.savings > 0 && (
-                    <span className="text-xl text-red-600 bg-red-100 px-3 py-1 rounded-full font-semibold">
+                    <span className="text-xl text-white bg-red-500 px-3 py-1 rounded-full font-bold">
                       -{product.priceComparison.savingsPercentage.toFixed(0)}% OFF
                     </span>
                   )}
@@ -142,14 +142,14 @@ export default async function ProductDetailPage({
                 {product.priceComparison.savings > 0 && (
                   <div className="space-y-2">
                     <div className="flex items-center justify-between text-sm">
-                      <span className="text-gray-600">Official Price:</span>
+                      <span className="text-gray-700 font-semibold">Official Price:</span>
                       <span className="text-gray-500 line-through">
                         {formatCurrency(product.officialPrice)}
                       </span>
                     </div>
                     <div className="flex items-center justify-between text-sm font-semibold">
-                      <span className="text-green-700">You Save:</span>
-                      <span className="text-green-700">
+                      <span className="text-sky-blue">You Save:</span>
+                      <span className="text-sky-blue">
                         {formatCurrency(product.priceComparison.savings)}
                       </span>
                     </div>
@@ -160,7 +160,7 @@ export default async function ProductDetailPage({
               {/* Stock Status */}
               <div className="mb-6">
                 {product.stock > 0 ? (
-                  <div className="flex items-center gap-2 text-green-600">
+                  <div className="flex items-center gap-2 text-sky-blue">
                     <svg className="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
                       <path fillRule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zm3.707-9.293a1 1 0 00-1.414-1.414L9 10.586 7.707 9.293a1 1 0 00-1.414 1.414l2 2a1 1 0 001.414 0l4-4z" clipRule="evenodd" />
                     </svg>
@@ -178,7 +178,7 @@ export default async function ProductDetailPage({
 
               {/* Add to Cart Button */}
               {product.stock > 0 ? (
-                <button className="w-full bg-green-600 text-white py-4 px-8 rounded-lg font-semibold text-lg hover:bg-green-700 transition-colors mb-4">
+                <button className="w-full btn-primary text-lg mb-4">
                   Add to Cart
                 </button>
               ) : (
@@ -190,7 +190,7 @@ export default async function ProductDetailPage({
               {/* Description */}
               {product.description && (
                 <div className="mt-8">
-                  <h2 className="text-2xl font-bold text-gray-900 mb-4">Description</h2>
+                  <h2 className="text-2xl font-bold text-dark-black mb-4">Description</h2>
                   <p className="text-gray-700 leading-relaxed whitespace-pre-line">
                     {product.description}
                   </p>
