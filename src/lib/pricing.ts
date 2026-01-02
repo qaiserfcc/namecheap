@@ -41,7 +41,8 @@ export function calculatePriceComparison(
  */
 export function formatCurrency(amount: number | Decimal): string {
   const value = typeof amount === 'number' ? amount : parseFloat(amount.toString());
-  return new Intl.NumberFormat('en-PK', {
+  // Using en-US with PKR currency for proper formatting
+  return new Intl.NumberFormat('en-US', {
     style: 'currency',
     currency: 'PKR',
     minimumFractionDigits: 0,

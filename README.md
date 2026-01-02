@@ -219,11 +219,22 @@ The frontend **never** calculates prices - all pricing logic is handled by the A
 - ✅ Password hashing with bcryptjs
 - ✅ JWT-based authentication
 - ✅ Refresh token rotation
-- ✅ Role-based access control
+- ✅ Role-based access control (RBAC)
 - ✅ Protected admin routes
 - ✅ Input validation with Zod
 - ✅ Serverless-safe database connections
 - ✅ No hardcoded secrets
+- ✅ Server-side price calculations only
+
+### Security Notes
+
+**Authentication Storage**: The current implementation uses localStorage for demo purposes. For production with sensitive data, consider:
+- HttpOnly cookies for tokens
+- Secure session management
+- Token encryption
+- CSRF protection
+
+**API Security**: All admin endpoints enforce RBAC at the API level, regardless of client-side storage.
 
 ## 🚀 Deployment
 
