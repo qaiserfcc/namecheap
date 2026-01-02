@@ -182,7 +182,7 @@ export default function AdminProductsPage() {
                       )}
                     </td>
                     <td className="px-6 py-4 text-sm">
-                      <button className="text-sky-blue hover:text-secondary-dark font-semibold mr-4 transition-colors">Edit</button>
+                      <button className="text-sky-blue hover:text-[#0EA5E9] font-semibold mr-4 transition-colors">Edit</button>
                       <button className="text-red-600 hover:text-red-800 font-semibold transition-colors">Delete</button>
                     </td>
                   </tr>

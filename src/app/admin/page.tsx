@@ -116,14 +116,14 @@ export default function AdminLoginPage() {
           <div className="mt-6 bg-gradient-to-r from-sky-blue/10 to-dark-yellow/10 border-2 border-sky-blue/30 rounded-lg p-4">
             <p className="text-sm font-bold text-dark-black mb-2">Demo Credentials:</p>
             <div className="text-sm text-gray-700 space-y-1">
-              <p><strong>Admin:</strong> admin@chiltanpure.com / admin123</p>
-              <p><strong>Buyer:</strong> buyer@example.com / buyer123</p>
+              <p><strong>Admin:</strong> admin@namecheap.com / admin123</p>
+              <p><strong>Buyer:</strong> buyer@namecheap.com / buyer123</p>
             </div>
           </div>
 
           {/* Links */}
           <div className="mt-6 text-center text-sm">
-            <Link href="/" className="text-sky-blue hover:text-secondary-dark font-semibold transition-colors">
+            <Link href="/" className="text-sky-blue hover:text-[#0EA5E9] font-semibold transition-colors">
               ← Back to Home
             </Link>
           </div>
