@@ -51,30 +51,30 @@ export default function AdminLoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-gray-100 flex items-center justify-center px-4">
+    <div className="min-h-screen bg-gradient-to-br from-sky-blue/20 via-white to-dark-yellow/20 flex items-center justify-center px-4">
       <div className="max-w-md w-full">
         {/* Logo/Header */}
         <div className="text-center mb-8">
-          <Link href="/" className="text-3xl font-bold text-green-600">
-            Chiltan Pure
+          <Link href="/" className="inline-block mb-4">
+            <img src="/logo.svg" alt="NameCheap" className="h-16 mx-auto" />
           </Link>
-          <h2 className="mt-4 text-2xl font-bold text-gray-900">Admin Login</h2>
+          <h2 className="mt-4 text-3xl font-bold text-dark-black">Admin Login</h2>
           <p className="mt-2 text-sm text-gray-600">
             Sign in to access the admin dashboard
           </p>
         </div>
 
         {/* Login Form */}
-        <div className="bg-white rounded-lg shadow-md p-8">
+        <div className="bg-white rounded-xl shadow-xl p-8 border-t-4 border-dark-yellow">
           <form onSubmit={handleLogin} className="space-y-6">
             {error && (
-              <div className="bg-red-50 border border-red-200 text-red-700 px-4 py-3 rounded">
+              <div className="bg-red-50 border-l-4 border-red-500 text-red-700 px-4 py-3 rounded">
                 {error}
               </div>
             )}
 
             <div>
-              <label htmlFor="email" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="email" className="block text-sm font-semibold text-dark-black mb-2">
                 Email Address
               </label>
               <input
@@ -83,13 +83,13 @@ export default function AdminLoginPage() {
                 required
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
-                placeholder="admin@chiltanpure.com"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-yellow focus:border-dark-yellow transition-all"
+                placeholder="admin@namecheap.com"
               />
             </div>
 
             <div>
-              <label htmlFor="password" className="block text-sm font-medium text-gray-700 mb-2">
+              <label htmlFor="password" className="block text-sm font-semibold text-dark-black mb-2">
                 Password
               </label>
               <input
@@ -98,7 +98,7 @@ export default function AdminLoginPage() {
                 required
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
-                className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:ring-2 focus:ring-green-500 focus:border-transparent"
+                className="w-full px-4 py-3 border-2 border-gray-300 rounded-lg focus:ring-2 focus:ring-dark-yellow focus:border-dark-yellow transition-all"
                 placeholder="••••••••"
               />
             </div>
@@ -106,24 +106,24 @@ export default function AdminLoginPage() {
             <button
               type="submit"
               disabled={loading}
-              className="w-full bg-green-600 text-white py-3 rounded-lg font-semibold hover:bg-green-700 transition-colors disabled:bg-gray-400 disabled:cursor-not-allowed"
+              className="w-full btn-primary disabled:bg-gray-400 disabled:cursor-not-allowed"
             >
               {loading ? 'Signing in...' : 'Sign In'}
             </button>
           </form>
 
           {/* Demo Credentials */}
-          <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
-            <p className="text-sm font-semibold text-blue-900 mb-2">Demo Credentials:</p>
+          <div className="mt-6 bg-gradient-to-r from-sky-blue/10 to-dark-yellow/10 border-2 border-sky-blue/30 rounded-lg p-4">
+            <p className="text-sm font-bold text-dark-black mb-2">Demo Credentials:</p>
             <div className="text-sm text-gray-700 space-y-1">
-              <p><strong>Admin:</strong> admin@chiltanpure.com / admin123</p>
-              <p><strong>Buyer:</strong> buyer@example.com / buyer123</p>
+              <p><strong>Admin:</strong> admin@namecheap.com / admin123</p>
+              <p><strong>Buyer:</strong> buyer@namecheap.com / buyer123</p>
             </div>
           </div>
 
           {/* Links */}
           <div className="mt-6 text-center text-sm">
-            <Link href="/" className="text-green-600 hover:text-green-700 font-medium">
+            <Link href="/" className="text-sky-blue hover:text-[#0EA5E9] font-semibold transition-colors">
               ← Back to Home
             </Link>
           </div>

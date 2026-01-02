@@ -34,34 +34,35 @@ export default function AdminOrdersPage() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-xl text-dark-black font-semibold">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-dark-black shadow-lg">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/admin/dashboard" className="text-2xl font-bold text-green-600">
-              Chiltan Pure Admin
+            <Link href="/admin/dashboard" className="flex items-center gap-3">
+              <img src="/logo.svg" alt="NameCheap" className="h-12" />
+              <span className="text-white font-semibold">Admin</span>
             </Link>
-            <div className="flex items-center gap-4">
-              <Link href="/admin/dashboard" className="text-gray-700 hover:text-green-600">
+            <div className="flex items-center gap-6">
+              <Link href="/admin/dashboard" className="text-white hover:text-dark-yellow transition-colors font-medium">
                 Dashboard
               </Link>
-              <Link href="/admin/products" className="text-gray-700 hover:text-green-600">
+              <Link href="/admin/products" className="text-white hover:text-dark-yellow transition-colors font-medium">
                 Products
               </Link>
-              <Link href="/admin/orders" className="text-green-600 font-semibold">
+              <Link href="/admin/orders" className="text-dark-yellow font-semibold">
                 Orders
               </Link>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-semibold"
               >
                 Logout
               </button>
@@ -72,21 +73,23 @@ export default function AdminOrdersPage() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Order Management</h1>
+        <h1 className="text-5xl font-bold text-dark-black mb-8">
+          Order <span className="text-dark-yellow">Management</span>
+        </h1>
 
-        <div className="bg-white rounded-lg shadow-sm p-12 text-center">
-          <div className="text-6xl mb-4">🛒</div>
-          <p className="text-xl text-gray-600 mb-4">No orders yet</p>
-          <p className="text-gray-500">
+        <div className="card p-12 text-center border-t-4 border-sky-blue">
+          <div className="text-7xl mb-6">🛒</div>
+          <p className="text-2xl text-dark-black font-semibold mb-4">No orders yet</p>
+          <p className="text-gray-500 text-lg">
             Orders placed by customers will appear here
           </p>
         </div>
 
-        <div className="mt-6 bg-blue-50 border border-blue-200 rounded-lg p-4">
+        <div className="mt-6 bg-gradient-to-r from-sky-blue/10 to-dark-yellow/10 border-2 border-sky-blue/30 rounded-lg p-4">
           <p className="text-sm text-gray-700">
-            <strong>Note:</strong> This page will display all customer orders with options to:
+            <strong className="text-dark-black">Note:</strong> This page will display all customer orders with options to:
           </p>
-          <ul className="list-disc list-inside text-sm text-gray-700 mt-2 space-y-1">
+          <ul className="list-disc list-inside text-sm text-gray-700 mt-3 space-y-2">
             <li>View order details</li>
             <li>Update order status (Pending → Confirmed → Processing → Shipped → Delivered)</li>
             <li>Update payment status</li>

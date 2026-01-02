@@ -36,28 +36,29 @@ export default function AdminDashboard() {
 
   if (loading) {
     return (
-      <div className="min-h-screen bg-gray-50 flex items-center justify-center">
-        <div className="text-xl text-gray-600">Loading...</div>
+      <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white flex items-center justify-center">
+        <div className="text-xl text-dark-black font-semibold">Loading...</div>
       </div>
     );
   }
 
   return (
-    <div className="min-h-screen bg-gray-50">
+    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
       {/* Header */}
-      <header className="bg-white shadow-sm">
+      <header className="bg-dark-black shadow-lg">
         <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
           <div className="flex justify-between items-center">
-            <Link href="/admin/dashboard" className="text-2xl font-bold text-green-600">
-              Chiltan Pure Admin
+            <Link href="/admin/dashboard" className="flex items-center gap-3">
+              <img src="/logo.svg" alt="NameCheap" className="h-12" />
+              <span className="text-white font-semibold">Admin</span>
             </Link>
             <div className="flex items-center gap-4">
-              <span className="text-gray-700">
+              <span className="text-white">
                 {user?.firstName || user?.email}
               </span>
               <button
                 onClick={handleLogout}
-                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors"
+                className="bg-red-500 text-white px-4 py-2 rounded-lg hover:bg-red-600 transition-colors font-semibold"
               >
                 Logout
               </button>
@@ -68,45 +69,47 @@ export default function AdminDashboard() {
 
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-        <h1 className="text-4xl font-bold text-gray-900 mb-8">Admin Dashboard</h1>
+        <h1 className="text-5xl font-bold text-dark-black mb-8">
+          Admin <span className="text-dark-yellow">Dashboard</span>
+        </h1>
 
         {/* Quick Stats */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="card p-6 border-t-4 border-dark-yellow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Products</p>
-                <p className="text-3xl font-bold text-gray-900">-</p>
+                <p className="text-sm text-gray-600 font-semibold">Total Products</p>
+                <p className="text-3xl font-bold text-dark-black">-</p>
               </div>
               <div className="text-4xl">📦</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="card p-6 border-t-4 border-sky-blue">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Total Orders</p>
-                <p className="text-3xl font-bold text-gray-900">-</p>
+                <p className="text-sm text-gray-600 font-semibold">Total Orders</p>
+                <p className="text-3xl font-bold text-dark-black">-</p>
               </div>
               <div className="text-4xl">🛒</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="card p-6 border-t-4 border-dark-yellow">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Revenue</p>
-                <p className="text-3xl font-bold text-gray-900">PKR -</p>
+                <p className="text-sm text-gray-600 font-semibold">Revenue</p>
+                <p className="text-3xl font-bold text-dark-black">PKR -</p>
               </div>
               <div className="text-4xl">💰</div>
             </div>
           </div>
 
-          <div className="bg-white rounded-lg shadow-sm p-6">
+          <div className="card p-6 border-t-4 border-sky-blue">
             <div className="flex items-center justify-between">
               <div>
-                <p className="text-sm text-gray-600">Customers</p>
-                <p className="text-3xl font-bold text-gray-900">-</p>
+                <p className="text-sm text-gray-600 font-semibold">Customers</p>
+                <p className="text-3xl font-bold text-dark-black">-</p>
               </div>
               <div className="text-4xl">👥</div>
             </div>
@@ -118,13 +121,13 @@ export default function AdminDashboard() {
           {/* Products */}
           <Link
             href="/admin/products"
-            className="bg-white rounded-lg shadow-sm p-8 hover:shadow-md transition-shadow group"
+            className="card p-8 group border-2 border-transparent hover:border-dark-yellow transition-all"
           >
             <div className="flex flex-col items-center text-center">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform">
                 📦
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Products</h2>
+              <h2 className="text-2xl font-bold text-dark-black mb-2 group-hover:text-dark-yellow transition-colors">Products</h2>
               <p className="text-gray-600">
                 Manage your product catalog, pricing, and inventory
               </p>
@@ -134,13 +137,13 @@ export default function AdminDashboard() {
           {/* Orders */}
           <Link
             href="/admin/orders"
-            className="bg-white rounded-lg shadow-sm p-8 hover:shadow-md transition-shadow group"
+            className="card p-8 group border-2 border-transparent hover:border-sky-blue transition-all"
           >
             <div className="flex flex-col items-center text-center">
               <div className="text-6xl mb-4 group-hover:scale-110 transition-transform">
                 🛒
               </div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Orders</h2>
+              <h2 className="text-2xl font-bold text-dark-black mb-2 group-hover:text-sky-blue transition-colors">Orders</h2>
               <p className="text-gray-600">
                 View and manage customer orders and shipments
               </p>
@@ -148,10 +151,10 @@ export default function AdminDashboard() {
           </Link>
 
           {/* Analytics */}
-          <div className="bg-white rounded-lg shadow-sm p-8 opacity-60">
+          <div className="card p-8 opacity-60">
             <div className="flex flex-col items-center text-center">
               <div className="text-6xl mb-4">📊</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Analytics</h2>
+              <h2 className="text-2xl font-bold text-dark-black mb-2">Analytics</h2>
               <p className="text-gray-600">
                 View sales reports and analytics (Coming Soon)
               </p>
@@ -159,10 +162,10 @@ export default function AdminDashboard() {
           </div>
 
           {/* Feature Flags */}
-          <div className="bg-white rounded-lg shadow-sm p-8 opacity-60">
+          <div className="card p-8 opacity-60">
             <div className="flex flex-col items-center text-center">
               <div className="text-6xl mb-4">🚩</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Feature Flags</h2>
+              <h2 className="text-2xl font-bold text-dark-black mb-2">Feature Flags</h2>
               <p className="text-gray-600">
                 Manage platform features (Coming Soon)
               </p>
@@ -170,10 +173,10 @@ export default function AdminDashboard() {
           </div>
 
           {/* Users */}
-          <div className="bg-white rounded-lg shadow-sm p-8 opacity-60">
+          <div className="card p-8 opacity-60">
             <div className="flex flex-col items-center text-center">
               <div className="text-6xl mb-4">👥</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Users</h2>
+              <h2 className="text-2xl font-bold text-dark-black mb-2">Users</h2>
               <p className="text-gray-600">
                 Manage customer accounts (Coming Soon)
               </p>
@@ -181,10 +184,10 @@ export default function AdminDashboard() {
           </div>
 
           {/* Settings */}
-          <div className="bg-white rounded-lg shadow-sm p-8 opacity-60">
+          <div className="card p-8 opacity-60">
             <div className="flex flex-col items-center text-center">
               <div className="text-6xl mb-4">⚙️</div>
-              <h2 className="text-2xl font-bold text-gray-900 mb-2">Settings</h2>
+              <h2 className="text-2xl font-bold text-dark-black mb-2">Settings</h2>
               <p className="text-gray-600">
                 Platform configuration (Coming Soon)
               </p>
@@ -193,24 +196,24 @@ export default function AdminDashboard() {
         </div>
 
         {/* Quick Links */}
-        <div className="mt-12 bg-white rounded-lg shadow-sm p-6">
-          <h2 className="text-xl font-bold text-gray-900 mb-4">Quick Actions</h2>
+        <div className="mt-12 card p-6">
+          <h2 className="text-2xl font-bold text-dark-black mb-4">Quick Actions</h2>
           <div className="flex flex-wrap gap-4">
             <Link
               href="/admin/products"
-              className="bg-green-600 text-white px-6 py-2 rounded-lg hover:bg-green-700 transition-colors"
+              className="btn-primary"
             >
               Add New Product
             </Link>
             <Link
               href="/admin/orders"
-              className="bg-blue-600 text-white px-6 py-2 rounded-lg hover:bg-blue-700 transition-colors"
+              className="btn-secondary"
             >
               View Orders
             </Link>
             <Link
               href="/"
-              className="bg-gray-200 text-gray-800 px-6 py-2 rounded-lg hover:bg-gray-300 transition-colors"
+              className="bg-dark-black text-white px-6 py-3 rounded-lg hover:bg-accent-light transition-colors font-semibold"
             >
               View Storefront
             </Link>
