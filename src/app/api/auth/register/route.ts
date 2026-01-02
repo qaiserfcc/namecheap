@@ -11,12 +11,33 @@ const registerSchema = z.object({
   password: z.string().min(6),
   firstName: z.string().optional(),
   lastName: z.string().optional(),
+  role: z.nativeEnum(UserRole).default(UserRole.BUYER),
+  adminSecret: z.string().optional(),
 });
 
 export async function POST(request: NextRequest) {
   try {
     const body = await request.json();
-    const { email, password, firstName, lastName } = registerSchema.parse(body);
+    const { email, password, firstName, lastName, role, adminSecret } = registerSchema.parse(body);
+
+    const targetRole = role ?? UserRole.BUYER;
+
+    if (targetRole === UserRole.ADMIN) {
+      const expectedSecret = process.env.ADMIN_REGISTRATION_SECRET;
+      if (!expectedSecret) {
+        return NextResponse.json(
+          errorResponse('Admin registration is disabled'),
+          { status: 403 }
+        );
+      }
+
+      if (adminSecret !== expectedSecret) {
+        return NextResponse.json(
+          errorResponse('Invalid admin registration secret'),
+          { status: 403 }
+        );
+      }
+    }
 
     // Check if user exists
     const existingUser = await prisma.user.findUnique({
@@ -40,7 +61,7 @@ export async function POST(request: NextRequest) {
         password: hashedPassword,
         firstName,
         lastName,
-        role: UserRole.BUYER, // Default role
+        role: targetRole,
       },
       select: {
         id: true,

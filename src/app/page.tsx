@@ -1,150 +1,204 @@
 import Link from 'next/link';
+import BannerCarousel from '@/components/BannerCarousel';
+import ProductCarousel from '@/components/ProductCarousel';
 
-export default function Home() {
+interface Product {
+  id: string;
+  name: string;
+  slug: string;
+  description: string | null;
+  officialPrice: number;
+  discountedPrice: number;
+  imageUrl: string | null;
+  stock: number;
+  priceComparison: {
+    savings: number;
+    savingsPercentage: number;
+  };
+}
+
+async function getProducts() {
+  try {
+    const response = await fetch(`${process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'}/api/products`, {
+      cache: 'no-store',
+    });
+    
+    if (!response.ok) {
+      throw new Error('Failed to fetch products');
+    }
+
+    const result = await response.json();
+    return result.data.products || [];
+  } catch (error) {
+    console.error('Error fetching products:', error);
+    return [];
+  }
+}
+
+export default async function Home() {
+  const products: Product[] = await getProducts();
+  const featuredProducts = products.slice(0, 4);
+  const bestsellerProducts = products.length > 4 ? products.slice(2, 6) : products.slice(0, 4);
+
   return (
-    <div className="min-h-screen bg-gradient-to-b from-gray-50 to-white">
-      {/* Header */}
-      <header className="bg-dark-black shadow-lg">
-        <nav className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4">
-          <div className="flex justify-between items-center">
-            <Link href="/" className="flex items-center gap-3">
-              <img src="/logo.svg" alt="NameCheap" className="h-12" />
-            </Link>
-            <div className="flex gap-6">
-              <Link 
-                href="/products" 
-                className="text-white hover:text-dark-yellow transition-colors font-medium"
-              >
-                Products
-              </Link>
-              <Link 
-                href="/cart" 
-                className="text-white hover:text-dark-yellow transition-colors font-medium"
-              >
-                Cart
-              </Link>
-              <Link 
-                href="/admin" 
-                className="text-white hover:text-dark-yellow transition-colors font-medium"
-              >
-                Admin
-              </Link>
-            </div>
+    <div className="min-h-screen bg-gradient-to-b from-gray-950 via-slate-900 to-gray-900">
+      {/* Navigation Header */}
+      <header className="fixed top-0 w-full z-50 backdrop-blur-md bg-gray-950/80 border-b border-white/10">
+        <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
+          <div className="text-2xl font-bold bg-gradient-to-r from-yellow-400 via-yellow-500 to-amber-600 bg-clip-text text-transparent">
+            NameCheap
           </div>
-        </nav>
+          <nav className="flex gap-8 text-sm">
+            <Link href="/" className="text-white/80 hover:text-yellow-400 transition">Home</Link>
+            <Link href="/brands" className="text-white/80 hover:text-yellow-400 transition">Products</Link>
+            <Link href="#about" className="text-white/80 hover:text-yellow-400 transition">About</Link>
+            <Link href="/admin" className="text-white/80 hover:text-yellow-400 transition">Admin</Link>
+          </nav>
+        </div>
       </header>
 
-      {/* Hero Section */}
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-16">
-        <div className="text-center">
-          <h1 className="text-6xl font-bold text-dark-black mb-6">
-            Welcome to <span className="text-dark-yellow">NameCheap</span>
-          </h1>
-          <p className="text-2xl text-sky-blue mb-4 font-semibold">
-            Premium Deals on Quality Products
+      {/* Banner Carousel */}
+      <div className="pt-20">
+        <BannerCarousel />
+      </div>
+
+      {/* About Us Section */}
+      <section className="py-20 px-6 border-t border-white/10">
+        <div className="max-w-7xl mx-auto text-center mb-16">
+          <h2 className="text-4xl font-bold text-white mb-4">About NameCheap</h2>
+          <p className="text-gray-400 max-w-2xl mx-auto">
+            Premium domain names and products at unbeatable prices. We're committed to delivering exceptional value and service to our customers worldwide.
           </p>
-          <p className="text-lg text-gray-600 mb-12 max-w-3xl mx-auto">
-            Discover amazing products at unbeatable prices. Compare official prices with our discounted rates 
-            and save big on every purchase. Your trusted e-commerce platform for the best deals online.
-          </p>
-
-          <div className="flex justify-center gap-6">
-            <Link
-              href="/products"
-              className="btn-primary"
-            >
-              Shop Now
-            </Link>
-            <Link
-              href="/admin"
-              className="btn-secondary"
-            >
-              Admin Panel
-            </Link>
-          </div>
         </div>
 
-        {/* Features */}
-        <div className="mt-24 grid grid-cols-1 md:grid-cols-3 gap-8">
-          <div className="card text-center p-8 border-t-4 border-dark-yellow">
-            <div className="text-5xl mb-6">💰</div>
-            <h3 className="text-2xl font-bold mb-3 text-dark-black">Best Prices</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Compare official vs discounted prices on every product and save money
-            </p>
-          </div>
-          <div className="card text-center p-8 border-t-4 border-sky-blue">
-            <div className="text-5xl mb-6">✓</div>
-            <h3 className="text-2xl font-bold mb-3 text-dark-black">Quality Assured</h3>
-            <p className="text-gray-600 leading-relaxed">
-              All products are verified and guaranteed for quality
-            </p>
-          </div>
-          <div className="card text-center p-8 border-t-4 border-dark-yellow">
-            <div className="text-5xl mb-6">🚚</div>
-            <h3 className="text-2xl font-bold mb-3 text-dark-black">Fast Delivery</h3>
-            <p className="text-gray-600 leading-relaxed">
-              Quick and reliable shipping directly to your doorstep
-            </p>
-          </div>
-        </div>
-
-        {/* System Info */}
-        <div className="mt-24 bg-gradient-to-r from-sky-blue/10 to-dark-yellow/10 border-2 border-sky-blue/30 rounded-xl p-8">
-          <h2 className="text-3xl font-bold mb-6 text-dark-black">Platform Overview</h2>
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-sm">
-            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="font-bold text-sky-blue mb-4 text-lg">Technology Stack:</h3>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Next.js with Server Components</li>
-                <li>PostgreSQL with Prisma ORM</li>
-                <li>JWT Authentication</li>
-                <li>Role-Based Access Control</li>
-              </ul>
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 max-w-7xl mx-auto">
+          {[
+            { label: 'Products', value: '10K+' },
+            { label: 'Customers', value: '50K+' },
+            { label: 'Years', value: '15+' },
+            { label: 'Countries', value: '180+' }
+          ].map((stat) => (
+            <div key={stat.label} className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 text-center hover:border-yellow-400/50 transition">
+              <div className="text-3xl font-bold bg-gradient-to-r from-yellow-400 to-amber-600 bg-clip-text text-transparent mb-2">
+                {stat.value}
+              </div>
+              <p className="text-white/70">{stat.label}</p>
             </div>
-            <div className="bg-white/60 backdrop-blur-sm rounded-lg p-6">
-              <h3 className="font-bold text-dark-yellow mb-4 text-lg">Features:</h3>
-              <ul className="list-disc list-inside text-gray-700 space-y-2">
-                <li>Official vs Discounted Pricing</li>
-                <li>Admin Dashboard</li>
-                <li>Order Management</li>
-                <li>Feature Toggles</li>
-              </ul>
+          ))}
+        </div>
+      </section>
+
+      {/* Featured Products */}
+      <section className="py-20 px-6 border-t border-white/10">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-2">Featured Products</h2>
+          <p className="text-gray-400 mb-12">Discover our most popular domain names and packages</p>
+          <ProductCarousel products={featuredProducts} />
+        </div>
+      </section>
+
+      {/* Why Choose Us */}
+      <section className="py-20 px-6 border-t border-white/10">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-12 text-center">Why Choose NameCheap</h2>
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              { 
+                title: 'Best Prices', 
+                description: 'Competitive pricing with frequent discounts and special offers',
+                icon: '💰'
+              },
+              { 
+                title: '24/7 Support', 
+                description: 'Our dedicated support team available round the clock',
+                icon: '🎧'
+              },
+              { 
+                title: 'Easy Management', 
+                description: 'Intuitive dashboard for managing all your domains',
+                icon: '⚡'
+              }
+            ].map((feature) => (
+              <div key={feature.title} className="backdrop-blur-md bg-white/10 border border-white/20 rounded-2xl p-8 hover:border-sky-400/50 hover:bg-white/20 transition">
+                <div className="text-4xl mb-4">{feature.icon}</div>
+                <h3 className="text-xl font-semibold text-white mb-3">{feature.title}</h3>
+                <p className="text-gray-400">{feature.description}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
+      {/* Bestsellers */}
+      <section className="py-20 px-6 border-t border-white/10">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-2">Best Sellers</h2>
+          <p className="text-gray-400 mb-12">Top-selling products our customers love</p>
+          <ProductCarousel products={bestsellerProducts} />
+        </div>
+      </section>
+
+      {/* CTA Section */}
+      <section className="py-20 px-6 border-t border-white/10">
+        <div className="max-w-4xl mx-auto">
+          <div className="backdrop-blur-md bg-gradient-to-r from-yellow-500/20 to-sky-500/20 border border-yellow-400/30 rounded-3xl overflow-hidden">
+            <div className="p-12 text-center">
+              <h2 className="text-3xl font-bold text-white mb-4">Ready to Get Started?</h2>
+              <p className="text-gray-300 mb-8">Join thousands of satisfied customers today</p>
+              <Link href="/brands" className="inline-block bg-gradient-to-r from-yellow-500 to-amber-600 hover:from-yellow-600 hover:to-amber-700 text-white font-semibold px-8 py-3 rounded-lg transition">
+                Browse Products Now
+              </Link>
             </div>
           </div>
         </div>
-      </main>
+      </section>
+
+      {/* Tech Stack */}
+      <section className="py-20 px-6 border-t border-white/10">
+        <div className="max-w-7xl mx-auto">
+          <h2 className="text-3xl font-bold text-white mb-12 text-center">Powered By Modern Tech</h2>
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+            {[
+              { name: 'Next.js', color: 'from-blue-400 to-blue-600' },
+              { name: 'Prisma', color: 'from-purple-400 to-purple-600' },
+              { name: 'PostgreSQL', color: 'from-emerald-400 to-emerald-600' },
+              { name: 'Tailwind CSS', color: 'from-cyan-400 to-cyan-600' }
+            ].map((tech) => (
+              <div key={tech.name} className={`backdrop-blur-md bg-gradient-to-br ${tech.color}/20 border border-white/20 rounded-2xl p-8 text-center hover:border-white/40 transition`}>
+                <p className="text-white font-semibold">{tech.name}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
 
       {/* Footer */}
-      <footer className="bg-dark-black text-white mt-32">
-        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-12">
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-8 mb-8">
-            <div>
-              <img src="/logo.svg" alt="NameCheap" className="h-10 mb-4" />
-              <p className="text-gray-400">
-                Your trusted e-commerce platform for premium deals.
-              </p>
-            </div>
-            <div>
-              <h4 className="text-dark-yellow font-bold mb-4">Quick Links</h4>
-              <ul className="space-y-2">
-                <li><Link href="/products" className="text-gray-400 hover:text-dark-yellow transition-colors">Products</Link></li>
-                <li><Link href="/cart" className="text-gray-400 hover:text-dark-yellow transition-colors">Cart</Link></li>
-                <li><Link href="/admin" className="text-gray-400 hover:text-dark-yellow transition-colors">Admin</Link></li>
-              </ul>
-            </div>
-            <div>
-              <h4 className="text-sky-blue font-bold mb-4">Contact</h4>
-              <p className="text-gray-400">
-                Email: support@namecheap.com<br />
-                Phone: +1 (555) 123-4567
-              </p>
-            </div>
+      <footer className="border-t border-white/10 py-12 px-6 bg-black/50">
+        <div className="max-w-7xl mx-auto">
+          <div className="grid grid-cols-1 md:grid-cols-4 gap-8 mb-8">
+            {[
+              { title: 'Company', links: ['About', 'Blog', 'Careers'] },
+              { title: 'Products', links: ['Domains', 'Hosting', 'Email'] },
+              { title: 'Support', links: ['Help Center', 'Contact', 'Status'] },
+              { title: 'Legal', links: ['Privacy', 'Terms', 'Cookies'] }
+            ].map((section) => (
+              <div key={section.title}>
+                <h4 className="text-yellow-400 font-semibold mb-4">{section.title}</h4>
+                <ul className="space-y-2">
+                  {section.links.map((link) => (
+                    <li key={link}>
+                      <a href="#" className="text-gray-400 hover:text-yellow-400 transition text-sm">
+                        {link}
+                      </a>
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            ))}
           </div>
-          <div className="text-center pt-8 border-t border-gray-700">
-            <p className="text-gray-400">
-              © 2024 NameCheap. Serverless E-commerce Platform.
-            </p>
+          <div className="border-t border-white/10 pt-8 text-center text-gray-400 text-sm">
+            <p>&copy; 2024 NameCheap. All rights reserved.</p>
           </div>
         </div>
       </footer>
