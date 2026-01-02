@@ -1,102 +1,75 @@
 
 🧠 MASTER COPILOT PROMPT
 
-
-
-Multi-Brand E-commerce Platform (Prisma + Neon + Price Comparison)
-
-
-
-
-
-ROLE & MINDSET
-
-
-You are a Senior Software Architect & Lead Engineer.
-Your task is to design and implement a production-grade, scalable multi-brand e-commerce platform with strict brand isolation, official vs discounted price comparison, and role-based access control.
-
-No demo shortcuts. No mock logic. Everything must be enterprise-ready.
-
-
+Single-Brand Serverless E-commerce Platform (Admin & Buyer) and always track progress in a file named PROGRESS.md
 
 
 1️⃣ PLATFORM OBJECTIVE
 
+Build a single-brand e-commerce platform where:
+	•	One official brand storefront exists (e.g., Chiltan Pure).
+	•	Buyers can browse products, compare prices, and place orders.
+	•	Admin manages products, pricing, orders, and configurations.
+	•	The system enforces official price vs discounted price comparison.
+	•	Architecture must be serverless-first, with no long-running servers.
 
-Build a multi-tenant e-commerce platform where:
+The system must be designed so multi-brand support can be added later without architectural rewrites.
 
-A main portal lists multiple brands (e.g., Chiltan Pure, Brand X).
-Clicking a brand opens a dedicated brand storefront.
-Each brand store exposes ONLY the features, products, pricing, checkout, and policies relevant to that brand.
-Platform enforces official brand pricing vs our discounted pricing with a mandatory price comparison view.
-
-
-
-
+⸻
 
 2️⃣ TECH STACK (MANDATORY)
 
-
-
 Frontend
+	•	Next.js (React)
+	•	Server Components + SSR enabled
+	•	SEO-optimized routing:
+	•	/
+	•	/products/{slug}
+	•	/cart
+	•	/checkout
+	•	/account
+	•	/admin
 
-
-Next.js (React, SSR, SEO enabled)
-Brand-based routing:/brands → /chiltan-pure → /product/{slug}
-
-
-
-Backend
-
-
-Node.js (NestJS preferred)
-REST APIs (OpenAPI v3 compliant)
-Clean Architecture
-
-
+Backend (Serverless)
+	•	Node.js (NestJS in serverless mode or lightweight handlers)
+	•	Serverless functions (Vercel / AWS Lambda / Azure Functions)
+	•	REST APIs
+	•	OpenAPI v3 compliant
+	•	Clean Architecture adapted for serverless execution
 
 Database & ORM
+	•	PostgreSQL (Neon – Serverless)
+	•	Prisma ORM only
+	•	Prisma optimized for serverless usage (connection pooling via Neon)
 
+⸻
 
-PostgreSQL (Neon)
-Prisma ORM only (no raw SQL unless approved)
+3️⃣ AUTHENTICATION & SECURITY (MANDATORY)
+	•	Neon Authentication features for user identity management
+	•	JWT-based access tokens
+	•	Refresh token strategy compatible with serverless execution
+	•	Role-Based Access Control (RBAC) enforced at API level
+	•	No session-based or in-memory auth logic
 
+⸻
 
+4️⃣ DATABASE ENVIRONMENTS (MANDATORY)
 
-Auth & Security
-
-
-JWT + Refresh Tokens
-Role-Based Access Control (RBAC)
-
-
-
-Deployment
-
-
-Docker-ready
-Cloud-agnostic (AWS / Azure compatible)
-
-
-
-
-
-3️⃣ DATABASE ENVIRONMENTS (MANDATORY)
-
+Prisma must resolve the database connection dynamically using NODE_ENV.
 
 Development
 
-DATABASE_URL="postgresql://neondb_owner:npg_nsTw81MrgcZR@ep-floral-shape-ahe8st7e-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
+DATABASE_URL="postgresql://<neon-dev-connection>"
 
 Production
 
-DATABASE_URL="postgresql://neondb_owner:npg_nsTw81MrgcZR@ep-lively-art-ahvle7ag-pooler.c-3.us-east-1.aws.neon.tech/neondb?sslmode=require&channel_binding=require"
-Prisma must resolve connection based on NODE_ENV.
+DATABASE_URL="postgresql://<neon-prod-connection>"
 
+Serverless-safe connection handling is required at all times.
 
+⸻
 
-
-4️⃣ PRISMA CONFIGURATION (STRICT)
+5️⃣ PRISMA CONFIGURATION (STRICT)
 
 datasource db {
   provider = "postgresql"
@@ -107,35 +80,33 @@ generator client {
   provider = "prisma-client-js"
 }
 
-Prisma Client must be generated on build.
-All DB access must go through Prisma.
+Rules:
+	•	Prisma Client must be generated during build
+	•	No raw SQL
+	•	No shared state between invocations
+	•	All DB access must go through Prisma
 
+⸻
 
+6️⃣ CORE DATA MODELS (REQUIRED)
 
-
-
-5️⃣ CORE DATA MODELS (REQUIRED)
 model Brand {
   id        String   @id @default(uuid())
   name      String
-  slug      String   @unique
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
 
   products  Product[]
-  users     User[]
 }
 
 model Product {
   id              String   @id @default(uuid())
-  brandId         String
   name            String
   description     String?
   officialPrice   Decimal
   discountedPrice Decimal
   isActive        Boolean  @default(true)
-
-  brand           Brand    @relation(fields: [brandId], references: [id])
+  createdAt       DateTime @default(now())
 }
 
 model User {
@@ -143,220 +114,141 @@ model User {
   email     String   @unique
   password  String
   role      UserRole
-  brandId   String?
-
-  brand     Brand?   @relation(fields: [brandId], references: [id])
+  createdAt DateTime @default(now())
 }
 
 enum UserRole {
-  SUPER_ADMIN
-  BRAND_ADMIN
-  BRAND_MANAGER
-  CUSTOMER
-  FINANCE
-  WAREHOUSE
+  ADMIN
+  BUYER
 }
 
-6️⃣ USER ROLES & PERMISSIONS
 
+⸻
 
+7️⃣ USER ROLES & PERMISSIONS
 
-Core Roles
+ADMIN
+	•	Manage products
+	•	Set official and discounted prices
+	•	Manage orders
+	•	View sales and discount analytics
+	•	Control feature toggles
 
+BUYER
+	•	Browse products
+	•	View price comparison
+	•	Add items to cart
+	•	Checkout and place orders
+	•	View order history
 
-SUPER_ADMIN
-Manage brands
-Global reports
-Audit pricing
+⸻
 
-BRAND_ADMIN
-Manage products
-Set official vs discounted prices
-View brand orders
-
-CUSTOMER
-Browse brands
-Compare prices
-Place orders
-
-
-
-
-Additional Roles
-
-
-BRAND_MANAGER (content only)
-WAREHOUSE (order fulfillment)
-FINANCE (read-only transactions)
-
-
-
-
-
-7️⃣ BRAND ISOLATION RULES (CRITICAL)
-
-
-Every API query MUST include brandId filtering.
-BRAND_ADMIN, MANAGER, FINANCE, WAREHOUSE cannot access other brands.
-Enforce via:
-Prisma middleware
-Guarded service layer
-
-
-
-
-
-
-8️⃣ PRICE COMPARISON (MANDATORY FEATURE)
-
+8️⃣ PRICE COMPARISON (MANDATORY)
 
 Each product must display:
+	•	Official Price (MSRP)
+	•	Discounted Price
+	•	Savings Amount
+	•	Savings Percentage
 
-Official Brand Price (MSRP)
-Our Discounted Price
-Savings Amount
-Savings Percentage
-
-
-
-Server-Side Logic (Required)
+Server-Side Calculation (Required)
 
 savings = officialPrice - discountedPrice
 percentage = (savings / officialPrice) * 100
-Frontend must not calculate prices.
 
+⚠️ Frontend must never calculate pricing or discounts.
 
+⸻
 
+9️⃣ FEATURE TOGGLES (SERVERLESS-COMPATIBLE)
 
-9️⃣ BRAND FEATURE TOGGLES
+Admin can enable or disable:
+	•	Cash on Delivery
+	•	Reviews & Ratings
+	•	Promotional discounts
+	•	International shipping
 
+Feature flags must be evaluated server-side and cached safely for serverless execution.
 
-Each brand can independently enable/disable:
+⸻
 
-COD
-Subscriptions
-Loyalty points
-International shipping
-Reviews & ratings
+🔟 CART, CHECKOUT & ORDERS
+	•	Single-brand checkout flow
+	•	Serverless-safe Prisma transactions for:
+	•	Order creation
+	•	Inventory updates
+	•	Payment status tracking
+	•	Payment gateway abstraction (stateless, extensible)
 
+⸻
 
-Only enabled features appear in UI.
+1️⃣1️⃣ ADMIN DASHBOARD
 
+Admin capabilities include:
+	•	Order management
+	•	Product & pricing control
+	•	Discount performance analytics
+	•	Revenue summaries
 
+All admin APIs must be protected via RBAC and Neon authentication.
 
-
-🔟 CHECKOUT & ORDERS
-
-
-Brand-specific checkout flows
-Prisma transactions for:
-Order creation
-Inventory update
-Payment status
-
-Multiple payment gateways (configurable per brand)
-
-
-
-
-
-1️⃣1️⃣ ADMIN DASHBOARDS
-
-
-
-Platform Dashboard
-
-
-Sales per brand
-Discount performance
-Price comparison analytics
-
-
-
-Brand Dashboard
-
-
-Orders
-Inventory alerts
-Conversion vs official price
-
-
-
-
+⸻
 
 1️⃣2️⃣ SEO & PERFORMANCE
+	•	SEO-friendly product pages
+	•	Structured product schema
+	•	CDN-ready image delivery
+	•	Optimized for cold-start performance
+	•	Page load target: < 2 seconds
 
-
-Brand-specific SEO metadata
-Product schema markup
-Image CDN support
-Page load < 2s
-
-
-
-
+⸻
 
 1️⃣3️⃣ MIGRATIONS & SEEDING (REQUIRED)
+	•	Use Prisma Migrate
+	•	Seed data must include:
+	•	Brand record
+	•	Products with official and discounted prices
+	•	One Admin user authenticated via Neon Auth
 
-
-Use Prisma Migrate
-Seed data must include:
-Brand: Chiltan Pure
-Products with official & discounted prices
-Brand Admin user
-
-
-
-
-
+⸻
 
 1️⃣4️⃣ NON-NEGOTIABLE RULES
+	•	No frontend price manipulation
+	•	No stateful server logic
+	•	No insecure admin endpoints
+	•	No hardcoded secrets
+	•	No bypassing Neon authentication
 
-
-No cross-brand data leaks
-No frontend price manipulation
-No shared admin access across brands
-No mock pricing logic
-
-
-
-
+⸻
 
 1️⃣5️⃣ ARCHITECTURAL OPINION (AUTHORITATIVE)
 
+This system must be treated as serverless by design, not serverless by deployment accident.
 
-Treat each brand as a tenant, not a filter.
-One database per environment, brand isolation via Prisma + RBAC.
+In my opinion, combining:
+	•	Serverless compute
+	•	Neon serverless PostgreSQL
+	•	Prisma ORM
+	•	RBAC
 
-This allows:
+is the correct foundation for a modern, compliant, and highly scalable e-commerce platform.
 
-White-label expansion
-Legal pricing compliance
-Enterprise scalability
-
-
-
-
+⸻
 
 ✅ DELIVERABLES EXPECTED FROM COPILOT
+	•	Serverless backend APIs
+	•	Prisma schema, migrations, and seeds
+	•	Neon-auth-integrated RBAC
+	•	Buyer storefront
+	•	Admin dashboard
+	•	Server-side price comparison logic
+	•	Production-ready, stateless code
 
-
-Full backend API
-Prisma schema, migrations, seed scripts
-Role-based auth guards
-Brand storefront routing
-Price comparison logic
-Admin dashboards
-Clean, production-ready code
-
-
-
-
+⸻
 
 🧠 FINAL INSTRUCTION
 
+Proceed step by step.
+When ambiguity exists, always choose the most secure, scalable, and serverless-friendly enterprise solution.
 
-Proceed step-by-step.
-If any ambiguity exists, choose the most secure, scalable, enterprise-grade option.
-
-
+⸻
